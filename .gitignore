@@ -1,0 +1,5 @@
+*.mov
+*.mp4
+bin/
+Vpy3/
+Object detection with Tensorflow/Tensor_swift_main.py

@@ -9,7 +9,9 @@ height = 450
 
 text_in = 0
 
-video_path = "swift.mp4"
+video_path = "Swift.mp4"
+
+cv2.namedWindow('Swift Counter')
 
 def test_intersection_in(x, y):
     # blue
@@ -19,7 +21,20 @@ def test_intersection_in(x, y):
         return True
     return False
 
+def nothing(x):
+    pass
+
 camera = cv2.VideoCapture(video_path)
+
+switch = '0 : OFF \n1 : ON'
+cv2.createTrackbar(switch, 'Swift Counter',0,1,nothing)
+
+
+# get time duration of video
+fps = camera.get(cv2.CAP_PROP_FPS)
+total_frame_amt = int(camera.get(cv2.CAP_PROP_FRAME_COUNT))
+vid_duration = total_frame_amt / fps
+print("The duration of the video is {}s".format(vid_duration))
 
 firstFrame = None
 
@@ -68,7 +83,6 @@ while True:
         cv2.circle(frame, rect_center_pt, 1, (0, 0, 255), 5)
 
         if(test_intersection_in((x + x + w) // 2, (y + y + h) // 2)):
-            print(rect_center_pt)
             text_in += 1
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -78,6 +92,8 @@ while True:
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
     cv2.imshow("Swift Counter", frame)
+
+    s = cv2.getTrackbarPos(switch,'Swift Counter')
 
 print('The total amount of Swift birds in is: {}'.format(text_in))
 # cleanup the camera and close any open windows
