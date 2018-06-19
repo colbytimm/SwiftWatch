@@ -3,17 +3,20 @@
 import sys
 import cv2
 import imutils
+import resources #pyrcc5 -o resources.py resource.qrc
 
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
+from PyQt5 import QtCore
 
 width = 800
 height = 450
 
 ref_pt = []
 click_count = 0
+
 
 class Thread(QThread):
     changePixmap = pyqtSignal(QImage)
@@ -28,22 +31,33 @@ class Thread(QThread):
             ret, frame = cap.read()
             rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
-            p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
+            #p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
+            p = convertToQtFormat.scaled(826, 461, Qt.KeepAspectRatio)
             self.changePixmap.emit(p)
 
+    def stop(self):
+        print("stop")
+
+class about(QMainWindow):
+    def __init__(self, parent=None):
+        super(about, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
+        loadUi("about_box.ui", self).setFixedSize(518, 340)
 
 class gui(QMainWindow):
 
     def __init__(self):
-        super(gui,self).__init__()
-        loadUi("comp_vis_ui.ui", self)
+        super(gui, self).__init__()
+        loadUi("mainwindow.ui", self).setFixedSize(807, 450)
+
+        self.about_dialog = about(self)
 
         self.load_btn.clicked.connect(self.load_clicked)
         self.play_btn.clicked.connect(self.play_clicked)
-        self.pause_btn.clicked.connect(self.pause_clicked)
+        self.about_btn.clicked.connect(self.about_clicked)
         self.stop_btn.clicked.connect(self.stop_clicked)
         self.draw_btn.clicked.connect(self.draw_clicked)
         self.initUI()
+
 
     @pyqtSlot()
     def load_clicked(self):
@@ -52,9 +66,13 @@ class gui(QMainWindow):
     def openFileNameDialog(self):
         global file_path
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+        #options |= QFileDialog.DontUseNativeDialog
         file_path, _ = QFileDialog.getOpenFileName(self, "Import Video File", "",
-        "Video Files (*.mp4 *.mov);;All Files (*)", options=options)
+        "Video Files (*.mp4 *.mov *avi);;All Files (*)", options=options)
+        try:
+            self.initUI()
+        except:
+            print("Can't play from import")
 
         if file_path:
             print(file_path)
@@ -64,13 +82,11 @@ class gui(QMainWindow):
             print("Path exists {}".format(file_path))
             self.initUI()
         except:
-            print("play")
-
-    def pause_clicked(self):
-        print("pause")
+            print("Play: no path exists")
 
     def stop_clicked(self):
-        print("stop")
+        th = Thread(self)
+        th.stop()
 
     def draw_clicked(self):
         print("draw")
@@ -97,12 +113,20 @@ class gui(QMainWindow):
         except:
             print("No path")
 
+    def about_clicked(self):
+        try:
+            self.about_dialog.setWindowTitle('About SwiftFinder')
+            self.about_dialog.show()
+        except:
+            print("No about box found")
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = gui()
-    window.setWindowTitle('Swift Finder')
-    window.show()
+    main_window = gui()
+    main_window.setWindowTitle('SwiftFinder')
+    main_window.show()
+
     sys.exit(app.exec_())
 
 
