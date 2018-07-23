@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>settings_window</class>
+ <widget class="QWidget" name="settings_window">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>350</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget#settings_window{
+	background-color: rgb(0, 0, 0);
+}</string>
+  </property>
+  <widget class="QComboBox" name="tracker_combo">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>70</y>
+     <width>131</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>MOSSE</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>CSRT</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="tracker_type">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>70</y>
+     <width>151</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel#tracker_type {
+	color: white;
+	font: 15pt &quot;Comic Sans MS&quot;;
+	qproperty-alignment: AlignRight;
+}</string>
+   </property>
+   <property name="text">
+    <string>Tracker Type</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="settings_header">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>321</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel#settings_header {
+	color: white;
+	font: 26pt &quot;Comic Sans MS&quot;;
+	qproperty-alignment: AlignCenter;
+}</string>
+   </property>
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="background_sub">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>110</y>
+     <width>171</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel#background_sub {
+	color: white;
+	font: 15pt &quot;Comic Sans MS&quot;;
+	qproperty-alignment: AlignRight;
+}</string>
+   </property>
+   <property name="text">
+    <string>Background Subtractor</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="bckgrnd_sub_combo">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>110</y>
+     <width>131</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>MOG</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>MOG2</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QSpinBox" name="erode_value">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>160</y>
+     <width>41</width>
+     <height>24</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="erode">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>160</y>
+     <width>171</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel#erode {
+	color: white;
+	font: 15pt &quot;Comic Sans MS&quot;;
+	qproperty-alignment: AlignRight;
+}</string>
+   </property>
+   <property name="text">
+    <string>Erode Iteration Value</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="contour">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>260</y>
+     <width>171</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel#contour {
+	color: white;
+	font: 15pt &quot;Comic Sans MS&quot;;
+	qproperty-alignment: AlignRight;
+}</string>
+   </property>
+   <property name="text">
+    <string>Contour View</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="dilate">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>210</y>
+     <width>171</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel#dilate {
+	color: white;
+	font: 15pt &quot;Comic Sans MS&quot;;
+	qproperty-alignment: AlignRight;
+}</string>
+   </property>
+   <property name="text">
+    <string>Dilate Iteration Value</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="dilate_value">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>210</y>
+     <width>41</width>
+     <height>24</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="reset_defaults_btn">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>510</y>
+     <width>131</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Reset to Default</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="video">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>310</y>
+     <width>171</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel#video {
+	color: white;
+	font: 15pt &quot;Comic Sans MS&quot;;
+	qproperty-alignment: AlignRight;
+}</string>
+   </property>
+   <property name="text">
+    <string>Remove Video View</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="prediction">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>360</y>
+     <width>171</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel#prediction {
+	color: white;
+	font: 15pt &quot;Comic Sans MS&quot;;
+	qproperty-alignment: AlignRight;
+}</string>
+   </property>
+   <property name="text">
+    <string>Prediction</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="bounding">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>410</y>
+     <width>171</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel#bounding {
+	color: white;
+	font: 15pt &quot;Comic Sans MS&quot;;
+	qproperty-alignment: AlignRight;
+}</string>
+   </property>
+   <property name="text">
+    <string>Bounding Box</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="contour_checkbox">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>260</y>
+     <width>87</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Enable</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="video_checkbox">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>310</y>
+     <width>87</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Enable</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="prediction_checkbox">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>360</y>
+     <width>87</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Enable</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="bounding_checkbox">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>410</y>
+     <width>87</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Enable</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="empty_trackers">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>460</y>
+     <width>181</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel#empty_trackers {
+	color: white;
+	font: 15pt &quot;Comic Sans MS&quot;;
+	qproperty-alignment: AlignRight;
+}</string>
+   </property>
+   <property name="text">
+    <string>Remove Empty Trackers</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="empty_tracker_checkbox">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>460</y>
+     <width>87</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Enable</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
