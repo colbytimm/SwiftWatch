@@ -1,6 +1,6 @@
 import numpy as np
 import cv2 as cv
-import swiftHelper as sh
+import swiftCounter.swiftHelper as sh
 
 # =============== CUSTOM TRACKER CLASS ===============
 

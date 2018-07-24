@@ -4,14 +4,15 @@ import cv2 as cv
 # =============== HELPER FUNCTIONS ===============
 
 def saveChimneyPoint(event, x, y, flags, param):
-	initialFrame = param[0]
-	chimneyPoints = param[1]
+	frame = param[0]
+	frameName = param[1]
+	chimneyPoints = param[2]
 
 	if event == cv.EVENT_LBUTTONDOWN and len(chimneyPoints) < 2:
 		print('Chimney point selected:', (x, y))
 		chimneyPoints.append((x,y))
-		cv.circle(initialFrame, (x, y), 1, (0, 0, 255), 2)
-		cv.imshow('initialFrame', initialFrame)
+		cv.circle(frame, (x, y), 1, (0, 0, 255), 2)
+		cv.imshow(frameName, frame)
 
 def drawBoundingBox(frame, box):
 	cv.rectangle(frame, (box[0], box[1]), (box[0]+box[2]-1, box[1]+box[3]-1), (250, 0, 1), 2)

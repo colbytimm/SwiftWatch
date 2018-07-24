@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
 from PyQt5 import QtCore
+from swiftCounter import swiftCounter as sc
 
 width = 800
 height = 450
@@ -27,6 +28,17 @@ class Thread(QThread):
 
     def run(self):
         print("run CV script here")
+
+        self.swiftCounter = sc.SwiftCounter(file_path)
+        frame = self.swiftCounter.currentFrame
+        
+        rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
+        p = convertToQtFormat.scaled(826, 461, Qt.KeepAspectRatio)
+        self.changePixmap.emit(p)
+
+        # self.swiftCounter.init()
+        # self.swiftCounter.start()
 
     def stop(self):
         global key
