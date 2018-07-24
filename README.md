@@ -1,4 +1,4 @@
-# SwiftFinder
+# SwiftWatch
 ## Automating the Collection of Bird Data from Video Footage
 ### Introduction
 
