@@ -6,3 +6,4 @@ Object detection with Tensorflow/Tensor_swift_main.py
 Contour tracking with line detection/run_all.py
 venv/
 Contour tracking with line detection/
+gui/swiftCounter/

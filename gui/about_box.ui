@@ -36,7 +36,7 @@
 }</string>
    </property>
    <property name="text">
-    <string>SwiftFinder</string>
+    <string>SwiftWATCH</string>
    </property>
   </widget>
   <widget class="QLabel" name="design_text">
@@ -201,7 +201,13 @@
 }</string>
    </property>
    <property name="text">
-    <string>Documentation and source at https://github.com/colbytimm/swiftfinder</string>
+    <string>Documentation and source at https://github.com/colbytimm/SwiftWatch</string>
+   </property>
+   <property name="textFormat">
+    <enum>Qt::PlainText</enum>
+   </property>
+   <property name="openExternalLinks">
+    <bool>true</bool>
    </property>
   </widget>
   <zorder>title</zorder>

@@ -1,6 +1,7 @@
 
 
 import sys
+import random
 import cv2
 #import imutils
 import resources #pyrcc5 -o resources.py resource.qrc
@@ -11,6 +12,7 @@ from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
 from PyQt5 import QtCore
 import swiftCounter.swiftCounter as sc
+import PyQt5
 
 width = 800
 height = 450
@@ -18,35 +20,12 @@ height = 450
 ref_pt = []
 click_count = 0
 
-
-class Thread(QThread):
-    changePixmap = pyqtSignal(QImage)
-
-    def get_path(self, video_path):
-        global path
-        path = video_path
-
-    def run(self):
-        print("run CV script here")
-
-        self.swiftCounter = sc.SwiftCounter(file_path)
-        frame = self.swiftCounter.currentFrame
-        
-        rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
-        p = convertToQtFormat.scaled(826, 461, Qt.KeepAspectRatio)
-        self.changePixmap.emit(p)
-        # self.swiftCounter.init()
-        # self.swiftCounter.start()
-
-    def stop(self):
-        global key
-        try:
-            if path:
-                key = 'stop'
-                print("stop")
-        except:
-            print("Can't stop -- no path")
+class Point:
+    def __init__(self):
+        self.x1 = None
+        self.y1 = None
+        self.x2 = None
+        self.y2 = None
 
 
 class about(QMainWindow):
@@ -130,12 +109,17 @@ class settings(QMainWindow):
 
 class gui(QMainWindow):
     app_name = "SwiftWatch"
+    x1 = None
+    y1 = None
+    x2 = None
+    y2 = None
 
     def __init__(self):
         super(gui, self).__init__()
         loadUi("mainwindow.ui", self).setFixedSize(807, 450)
 
-        self.changePixmap = pyqtSignal(QImage) ####################
+        self.begin = QtCore.QPoint()
+        self.end = QtCore.QPoint()
 
         self.about_dialog = about(self)
         self.setting_dialog = settings(self)
@@ -163,7 +147,6 @@ class gui(QMainWindow):
         try:
             if file_path:
                 print(file_path)
-                self.initUI()
         except:
             print("Can't play from import")
 
@@ -171,13 +154,12 @@ class gui(QMainWindow):
         try:
             if path:
                 print("Path exists {}".format(file_path))
-                self.initUI()
+
         except:
             print("Play: no path exists")
 
     def stop_clicked(self):
-        th = Thread(self)
-        th.stop()
+        print('stop')
 
     def draw_clicked(self):
         # draw enterence to chimney here
@@ -187,15 +169,26 @@ class gui(QMainWindow):
         self.video_label.setPixmap(QPixmap.fromImage(image))
 
     def initUI(self):
-        th = Thread(self)
-
         try:
-            th.get_path(file_path)
-            th.changePixmap.connect(self.set_image)
-            th.start()
+            self.swiftCounter = sc.SwiftCounter(file_path)
+            self.get_path(file_path)
+            self.run()
 
         except:
             print("No path")
+
+    def get_path(self, video_path):
+        global path
+        path = video_path
+
+    def run(self):
+        print('run')
+        # frame = self.swiftCounter.currentFrame
+        #
+        # rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        # convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
+        # p = convertToQtFormat.scaled(826, 461, Qt.KeepAspectRatio)
+        # self.changePixmap.emit(p)
 
     def about_clicked(self):
         try:
@@ -211,6 +204,25 @@ class gui(QMainWindow):
             self.setting_dialog.show()
         except:
             print("No settings box found")
+
+    def paintEvent(self, event):
+        qp = QPainter(self)
+        br = QBrush(QColor(100, 10, 10, 100))
+        qp.setBrush(br)
+        qp.drawRect(QtCore.QRect(self.begin, self.end))
+
+    def mousePressEvent(self, event):
+        self.begin = event.pos()
+        self.end = event.pos()
+        self.update()
+
+    def mouseMoveEvent(self, event):
+        self.end = event.pos()
+        self.update()
+
+    def mouseReleaseEvent(self, event):
+        self.begin = event.pos()
+        self.end = event.pos()
 
 
 if __name__ == "__main__":
