@@ -168,6 +168,7 @@ class gui(QMainWindow):
     def __init__(self):
         super(gui, self).__init__()
         loadUi("mainwindow.ui", self).setFixedSize(807, 450)
+        #loadUi("mainwindow_presentation.ui", self).setFixedSize(1050, 589)
 
         self.changePixmap = pyqtSignal(QImage)
 
@@ -218,6 +219,7 @@ class gui(QMainWindow):
 
     def draw_clicked(self):
         # draw enterence to chimney here
+        #self.showFullScreen()
         print("draw")
 
     def set_image(self, image):
