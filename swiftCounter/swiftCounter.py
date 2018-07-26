@@ -8,18 +8,21 @@ class SwiftCounter:
 
 	mainFrameName = 'Main Frame'
 	maskFrameName = 'Mask Frame'
-	currentFrame = None
+	currentBigFrame = None
+	currentSmallFrame = None
 
 	instructionTextColour = (204, 51, 0)
 
 	showFrames = True
 	frameByFrame = False
+	renderSmallFrame = False
 
 	erodeIterations = 1
 	dilateIterations = 1
 
 	imageScale = 0.5
 
+	# points relate to position on the small frame (main bounding box)
 	chimneyPoints = []
 	drawingChimneyLine = False
 
@@ -49,19 +52,30 @@ class SwiftCounter:
 	frameCols = 0
 	frameRows = 0
 
+	_stop = False
 
-	def __init__(self, videoPath):
+
+	def __init__(self, videoPath, renderFunc, backgroundSubtractor=1):
 		self.videoPath = videoPath
+		self.renderFunc = renderFunc
+		self.setBackgroundSubtractor(backgroundSubtractor)
+
 		self.videoCapture = cv.VideoCapture(videoPath)
-		ret, self.currentFrame = self.videoCapture.read()
+		ret, self.currentBigFrame = self.videoCapture.read()
+
+		# always render the big frame first
+		self.renderFunc(self.currentBigFrame)
+
 		if not ret:
 			print('Failed to read first frame - aborting program.')
 			quit() # Probably change this to display an error message
 
-	def init(self):
-		self.setBackgroundSubtractor(1)
-		self.setMainROI()
-		self.setChimneyPoints()
+	# Convert to correct format and render in gui
+	def renderMainFrame(self):
+		if self.renderSmallFrame:
+			self.renderFunc(self.currentSmallFrame)
+		else:
+			self.renderFunc(self.currentBigFrame)
 
 	def setBackgroundSubtractor(self, index):
 		if index == 0:
@@ -82,59 +96,49 @@ class SwiftCounter:
 		#cvTracker = cv.TrackerMIL_create()
 		#cvTracker = cv.TrackerTLD_create()
 
-	def setMainROI(self):
-		cv.putText(self.currentFrame, '1. Draw the main bounding box then press any key', (10, 30),
-					cv.FONT_HERSHEY_SIMPLEX, 0.75, self.instructionTextColour, 2)
+	def setMainROI(self, mainBBox):
+		self.mainBBox = mainBBox
+		self.frameCols = mainBBox[2]
+		self.frameRows = mainBBox[3]
+		sh.drawBoundingBox(self.currentBigFrame, self.mainBBox)
+		# always render the big frame here
+		self.renderFunc(self.currentBigFrame)
 
-		# select main region of interest
-		self.mainBBox = cv.selectROI(self.mainFrameName, self.currentFrame, False)
-		self.frameCols = self.mainBBox[2]
-		self.frameRows = self.mainBBox[3]
+	def setChimneyPoints(self, chimneyPoints):
+		# translate the line to the position in the small frame (main bounding box)
+		self.chimneyPoints.append((chimneyPoints[0][0] - self.mainBBox[0], chimneyPoints[0][1] - self.mainBBox[1]))
+		self.chimneyPoints.append((chimneyPoints[1][0] - self.mainBBox[0], chimneyPoints[1][1] - self.mainBBox[1]))
+		self.drawChimneyLine()
 
-		sh.drawBoundingBox(self.currentFrame, self.mainBBox)
-		print(self.mainBBox)
+		# always render the big frame here
+		self.renderFunc(self.currentBigFrame)
+		
 
-	def setChimneyPoints(self):
-		cv.putText(self.currentFrame, '2. Pick the chimney points starting with the left side then press any key', (10, 60),
-					cv.FONT_HERSHEY_SIMPLEX, 0.75, self.instructionTextColour, 2)
-		cv.imshow(self.mainFrameName, self.currentFrame)
+	def drawChimneyLine(self):
+		cv.line(self.currentSmallFrame, self.chimneyPoints[0], self.chimneyPoints[1], (250, 0, 1), 2)
 
-		# get the points for the chimney-top line
-		cv.setMouseCallback(self.mainFrameName, sh.saveChimneyPoint, [self.currentFrame, self.mainFrameName, self.chimneyPoints])
+	def updateSmallFrame(self):
+			# get the small frame from the bounding box
+			self.currentSmallFrame = self.currentBigFrame[int(self.mainBBox[1]):int(self.mainBBox[1]+self.mainBBox[3]), \
+				int(self.mainBBox[0]):int(self.mainBBox[0]+self.mainBBox[2])]
 
-		# draw the chimney line
-		while len(self.chimneyPoints) < 2:
-			print('Add chimney points', self.chimneyPoints)
-			# Wait for keypress
-			cv.waitKey(0)
-
-		# draw the chimney line
-		cv.line(self.currentFrame, self.chimneyPoints[0], self.chimneyPoints[1], (250, 0, 1), 2)
-		cv.imshow(self.mainFrameName, self.currentFrame)
-
-		# translate the line to the position in the main bounding box
-		self.chimneyPoints[0] = (self.chimneyPoints[0][0] - self.mainBBox[0], self.chimneyPoints[0][1] - self.mainBBox[1])
-		self.chimneyPoints[1] = (self.chimneyPoints[1][0] - self.mainBBox[0], self.chimneyPoints[1][1] - self.mainBBox[1])
-
+	def cleanup(self):
+		self.videoCapture.release()
 
 	def stop(self):
-		pass
-
+		self._stop = True
 
 	def start(self):
-		print('Starting the hard work')
-
-		while(1):
-			ret, self.currentFrame = self.videoCapture.read()
+		while not self._stop:
+			ret, self.currentBigFrame = self.videoCapture.read()
 
 			if not ret:
 				break
 
-			# get the image from the bounding box
-			mainFrame = self.currentFrame[int(self.mainBBox[1]):int(self.mainBBox[1]+self.mainBBox[3]), int(self.mainBBox[0]):int(self.mainBBox[0]+self.mainBBox[2])]
+			self.updateSmallFrame()
 
 			# convert to greyscale and blur
-			maskFrame = cv.cvtColor(mainFrame, cv.COLOR_BGR2GRAY)
+			maskFrame = cv.cvtColor(self.currentSmallFrame, cv.COLOR_BGR2GRAY)
 			maskFrame = cv.GaussianBlur(maskFrame, (11, 11), 0)
 
 			# get the foreground mask 
@@ -147,9 +151,43 @@ class SwiftCounter:
 
 			# find contours and draw then on the main frame
 			contoursFrame, contours, hierarchy = cv.findContours(maskFrame, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-			#cv.drawContours(mainFrame, contours, -1,  (0, 255, 0), 1);
+			#cv.drawContours(self.currentSmallFrame, contours, -1,  (0, 255, 0), 1);
 
-			# update trackers
+			self.updateTrackers(maskFrame, contours)
+			self.findNewContours(maskFrame, contours)
+
+			if self.showFrames:
+				# display counts
+				cv.putText(self.currentSmallFrame, "In: {}".format(str(self.enteredChimneyCount)), (10, 70),
+					cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+				
+				# draw bounding box and chimney line
+				sh.drawBoundingBox(self.currentBigFrame, self.mainBBox)
+				self.drawChimneyLine()
+
+				# render the main frame in the gui
+				self.renderMainFrame()
+
+			if self.frameByFrame:
+				# wait for key press
+				if cv.waitKey(0) == ord('q'):
+					break
+
+			#check if video is finished
+			k = cv.waitKey(1) & 0xff
+			if k == 27 or k == ord('q'):
+				break
+
+		print("LOOP ENDED")
+
+		# print('Total amount of birds entering:', self.enteredChimneyCount)
+		# print('From prediction:', self.enteredChimneyCountFromPrediction)
+		# print('From lost above chimney:', self.enteredChimneyCountFromLostAboveChimney)
+		# print('Total amount of birds exiting:', self.exitedChimneyCount)
+		# print('Total trackers created:', self.totalTrackersCreated)
+
+
+	def updateTrackers(self, maskFrame, contours):
 			for tracker in self.trackers:
 				wasLocated = tracker.update(maskFrame)
 
@@ -172,8 +210,8 @@ class SwiftCounter:
 				if self.showFrames:
 					#tracker.drawBbox(maskFrame, (255,0,0))
 					tracker.drawShrunkBbox(maskFrame, (255,0,0))
-					#tracker.drawBbox(mainFrame, (255,0,0))
-					tracker.drawShrunkBbox(mainFrame, (255,0,0))
+					#tracker.drawBbox(self.currentSmallFrame, (255,0,0))
+					tracker.drawShrunkBbox(self.currentSmallFrame, (255,0,0))
 
 					# draw the line to the predicted point
 					point = tracker.getPoint()
@@ -181,7 +219,7 @@ class SwiftCounter:
 					if point is not None and ppoint is not None:
 						point = (int(point[0]), int(point[1]))
 						ppoint = (int(ppoint[0]), int(ppoint[1]))
-						cv.line(mainFrame, point, ppoint, (0, 255, 0), 1)
+						cv.line(self.currentSmallFrame, point, ppoint, (0, 255, 0), 1)
 
 
 				if tracker.enteredChimney(self.chimneyPoints):
@@ -193,100 +231,78 @@ class SwiftCounter:
 				# 	exitedChimneyCount +=1
 				# 	print('\nEXITED CHIMNEY, count:', exitedChimneyCount, '\n')
 
-			# find new contours and create trackers
-			for contour in contours:
 
-				# gets the contour size, ignoring contours outside the provided area bounds
-				centerPoint = sh.getContourCenter(contour, self.minContourArea, self.maxContourArea)
+	# Creates a tracker when a new contour is found
+	def findNewContours(self, maskFrame, contours):
+		for contour in contours:
 
-				if centerPoint is None:
+			# gets the contour size, ignoring contours outside the provided area bounds
+			centerPoint = sh.getContourCenter(contour, self.minContourArea, self.maxContourArea)
+
+			if centerPoint is None:
+				continue
+
+			if self.ignoreContoursInLargeBoundingBox:
+				# don't create a tracker for contours inside a tracker main bounding box
+				if sh.contourInBBox(centerPoint, self.trackers):
+					continue
+			else:
+				# don't create a tracker for contours inside a shrunk tracker bounding box
+				if sh.contourInShrunkBBox(centerPoint, self.trackers):
 					continue
 
-				if self.ignoreContoursInLargeBoundingBox:
-					# don't create a tracker for contours inside a tracker main bounding box
-					if sh.contourInBBox(centerPoint, self.trackers):
-						continue
-				else:
-					# don't create a tracker for contours inside a shrunk tracker bounding box
-					if sh.contourInShrunkBBox(centerPoint, self.trackers):
-						continue
+			x,y,w,h = cv.boundingRect(contour)
 
-				x,y,w,h = cv.boundingRect(contour)
+			# extra check to make sure bounding box is in the frame and has a width and heigt
+			# of at least 1
+			if x < 0 or (x + w) > self.frameCols or y < 0 or (y + h) > self.frameRows or w < 1 or h < 1:
+				continue 
 
-				# extra check to make sure bounding box is in the frame and has a width and heigt
-				# of at least 1
-				if x < 0 or (x + w) > self.frameCols or y < 0 or (y + h) > self.frameRows or w < 1 or h < 1:
-					continue 
+			# expand the bounding box size
+			x = x - self.extraBoxSize
+			y = y - self.extraBoxSize
+			w = w + (self.extraBoxSize * 2)
+			h = h + (self.extraBoxSize * 2)
 
-				# expand the bounding box size
-				x = x - self.extraBoxSize
-				y = y - self.extraBoxSize
-				w = w + (self.extraBoxSize * 2)
-				h = h + (self.extraBoxSize * 2)
+			# ignore the bird if it is too close to the edge of the frame
+			if centerPoint[0] < 0 or centerPoint[1] < 0 or \
+				centerPoint[0] > self.mainBBox[2] or centerPoint[1] > self.mainBBox[3]:
+				continue
 
-				# ignore the bird if it is too close to the edge of the frame
-				if centerPoint[0] < 0 or centerPoint[1] < 0 or \
-					centerPoint[0] > self.mainBBox[2] or centerPoint[1] > self.mainBBox[3]:
-					continue
+			# create and initialize the tracker
+			cvTracker = self.createCVTracker()
+			success = cvTracker.init(maskFrame, (x,y,w,h))
 
-				# create and initialize the tracker
-				cvTracker = self.createCVTracker()
-				success = cvTracker.init(maskFrame, (x,y,w,h))
+			if success:
+				self.totalTrackersCreated += 1
 
-				if success:
-					self.totalTrackersCreated += 1
+				# add the tracker and draw the bounding box
+				customTracker = ct.Tracker(maskFrame, cvTracker, centerPoint, (x,y,w,h))
+				self.trackers.append(customTracker)
 
-					# add the tracker and draw the bounding box
-					customTracker = ct.Tracker(maskFrame, cvTracker, centerPoint, (x,y,w,h))
-					self.trackers.append(customTracker)
+				if self.showFrames:
+					customTracker.drawShrunkBbox(maskFrame, (0,0,255))
+					customTracker.drawShrunkBbox(self.currentSmallFrame, (0,0,255))
 
-					if self.showFrames:
-						customTracker.drawShrunkBbox(maskFrame, (0,0,255))
-						customTracker.drawShrunkBbox(mainFrame, (0,0,255))
-
-				else:
-					print('Failed to create tracker')
-
-
-			if self.showFrames:
-				# display counts
-				cv.putText(mainFrame, "In: {}".format(str(self.enteredChimneyCount)), (10, 70),
-					cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-				
-				# draw bounding box and chimney line
-				sh.drawBoundingBox(self.currentFrame, self.mainBBox)
-				cv.line(mainFrame, self.chimneyPoints[0], self.chimneyPoints[1], (250, 0, 1), 2)
-
-				# draw the frames
-				cv.imshow(self.mainFrameName, self.currentFrame)
-				cv.imshow(self.maskFrameName, maskFrame)
-
-			if self.frameByFrame:
-				# wait for key press
-				if cv.waitKey(0) == ord('q'):
-					break
-
-			#check if video is finished
-			k = cv.waitKey(1) & 0xff
-			if k == 27 or k == ord('q'):
-				break
-
-
-		print('Total amount of birds entering:', self.enteredChimneyCount)
-		print('From prediction:', self.enteredChimneyCountFromPrediction)
-		print('From lost above chimney:', self.enteredChimneyCountFromLostAboveChimney)
-		print('Total amount of birds exiting:', self.exitedChimneyCount)
-		print('Total trackers created:', self.totalTrackersCreated)
-
-		self.videoCapture.release()
-		cv.destroyAllWindows()
-
+			else:
+				print('Failed to create tracker')
 
 
 if __name__ == '__main__':
-	filePath = '/Users/SamTaylor/Courses/seng499/testfiles/unofficial/birds_busy1.mp4'
-	sc = SwiftCounter(filePath)
-	sc.init()
-	sc.start()
+
+	cv.namedWindow('Main Frame', cv.WINDOW_KEEPRATIO)
+
+	def cvRender(frame):
+		cv.imshow('Main Frame', frame)
+
+	file_path = '/Users/SamTaylor/Courses/seng499/testfiles/unofficial/birds_busy1.mp4'
+	mainBBox = (440, 178, 827, 556)
+	chimneyPoints = ((755, 693), (869, 687))
+
+	swiftCounter = SwiftCounter(file_path, cvRender)
+	swiftCounter.setMainROI(mainBBox)
+	swiftCounter.setChimneyPoints(chimneyPoints)
+	swiftCounter.start()
+	swiftCounter.cleanup()
 
 
