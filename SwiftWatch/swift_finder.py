@@ -5,6 +5,7 @@ import cv2
 #import imutils
 import resources #pyrcc5 -o resources.py resource.qrc
 from enum import Enum
+import threading
 
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -21,6 +22,8 @@ click_count = 0
 
 mainROI = ()
 chimneyPoints = ()
+
+startCondition = threading.Condition()
 
 class State(Enum):
     LOAD_VIDEO = 0
@@ -48,13 +51,23 @@ class Thread(QThread):
 
         # Convert to points to the correct position...
 
-        self.swiftCounter = sc.SwiftCounter(file_path, self.renderFrame)
+        self.state = State.RUNNING
+        self.swiftCounter = sc.SwiftCounter(file_path, self.renderFrame, startCondition)
         self.swiftCounter.setMainROI(mainBBox)
         self.swiftCounter.setChimneyPoints(chimneyPoints)
         self.swiftCounter.start()
 
     def stop(self):
-        self.swiftCounter.stop()
+        if self.state == State.RUNNING:
+            self.swiftCounter.stop()
+            self.state = State.STOPPED
+
+    def play(self):
+        global startCondition
+        if self.state == State.STOPPED:
+            with startCondition:
+                startCondition.notifyAll()
+            self.state = State.RUNNING
 
     def toQtFormat(self, frame):
         rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -194,12 +207,9 @@ class gui(QMainWindow):
             print("Can't play from import")
 
     def play_clicked(self):
-        try:
-            if path:
-                print("Path exists {}".format(file_path))
-                #self.initUI()
-        except:
-            print("Play: no path exists")
+        if not self.trackerThread:
+            return
+        self.trackerThread.play()
 
     def stop_clicked(self):
         if not self.trackerThread:

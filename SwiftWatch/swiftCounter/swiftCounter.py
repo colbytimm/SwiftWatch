@@ -3,6 +3,7 @@ import cv2 as cv
 import swiftCounter.customTracker as ct
 import swiftCounter.swiftHelper as sh
 import time
+import threading
 
 class SwiftCounter:
 
@@ -52,12 +53,14 @@ class SwiftCounter:
 	frameCols = 0
 	frameRows = 0
 
-	_stop = True
+	_stop = False
+	startCondition = None
 
 
-	def __init__(self, videoPath, renderFunc, backgroundSubtractor=1):
+	def __init__(self, videoPath, renderFunc, startCondition, backgroundSubtractor=1):
 		self.videoPath = videoPath
 		self.renderFunc = renderFunc
+		self.startCondition = startCondition
 		self.setBackgroundSubtractor(backgroundSubtractor)
 
 		self.videoCapture = cv.VideoCapture(videoPath)
@@ -129,11 +132,10 @@ class SwiftCounter:
 		self._stop = True
 
 	def start(self):
-		self._stop = False
 		self.countSwifts()
 
 	def countSwifts(self):
-		while not self._stop:
+		while True:
 			ret, self.currentBigFrame = self.videoCapture.read()
 
 			if not ret:
@@ -172,10 +174,10 @@ class SwiftCounter:
 				# render the main frame in the gui
 				self.renderMainFrame()
 
-			if self.frameByFrame:
-				# wait for key press
-				if cv.waitKey(0) == ord('q'):
-					break
+			if self._stop:
+				self._stop = False
+				with self.startCondition:
+					self.startCondition.wait()
 
 			#check if video is finished
 			k = cv.waitKey(1) & 0xff
