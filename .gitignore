@@ -8,3 +8,6 @@ venv/
 Contour tracking with line detection/
 gui/swiftCounter/
 swiftCounter copy/
+SwiftWatch/__pycache__/
+SwiftWatch/swiftCounter/__pycache__/
+.DS_Store
