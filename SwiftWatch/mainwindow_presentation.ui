@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>807</width>
-    <height>455</height>
+    <width>1049</width>
+    <height>586</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,8 +22,8 @@
    <widget class="QPushButton" name="play_btn">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>390</y>
+      <x>510</x>
+      <y>520</y>
       <width>51</width>
       <height>51</height>
      </rect>
@@ -62,27 +62,11 @@ QToolTip {
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="video_label">
-    <property name="geometry">
-     <rect>
-      <x>-10</x>
-      <y>-10</y>
-      <width>826</width>
-      <height>471</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QPushButton" name="stop_btn">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>400</y>
+      <x>460</x>
+      <y>530</y>
       <width>31</width>
       <height>31</height>
      </rect>
@@ -124,7 +108,7 @@ QToolTip {
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>390</y>
+      <y>530</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -165,8 +149,8 @@ QToolTip {
    <widget class="QPushButton" name="load_btn">
     <property name="geometry">
      <rect>
-      <x>750</x>
-      <y>390</y>
+      <x>990</x>
+      <y>530</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -250,7 +234,7 @@ QToolTip {
    <widget class="QPushButton" name="settings_btn">
     <property name="geometry">
      <rect>
-      <x>750</x>
+      <x>990</x>
       <y>20</y>
       <width>41</width>
       <height>41</height>
@@ -289,13 +273,6 @@ QToolTip {
      <string/>
     </property>
    </widget>
-   <zorder>video_label</zorder>
-   <zorder>play_btn</zorder>
-   <zorder>stop_btn</zorder>
-   <zorder>draw_btn</zorder>
-   <zorder>load_btn</zorder>
-   <zorder>about_btn</zorder>
-   <zorder>settings_btn</zorder>
   </widget>
  </widget>
  <resources/>
