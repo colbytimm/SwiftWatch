@@ -27,17 +27,16 @@ class Thread(QThread):
         path = video_path
 
     def run(self):
-        print("run CV script here")
+        # Get the main bounding box...
+        mainBBox = (440, 178, 827, 556)
 
-        self.swiftCounter = sc.SwiftCounter(file_path)
-        frame = self.swiftCounter.currentFrame
-        
-        rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
-        p = convertToQtFormat.scaled(826, 461, Qt.KeepAspectRatio)
-        self.changePixmap.emit(p)
-        # self.swiftCounter.init()
-        # self.swiftCounter.start()
+        # Get the chimney points...
+        chimneyPoints = ((755, 693), (869, 687))
+
+        self.swiftCounter = sc.SwiftCounter(file_path, self.renderFrame)
+        self.swiftCounter.setMainROI(mainBBox)
+        self.swiftCounter.setChimneyPoints(chimneyPoints)
+        self.swiftCounter.start()
 
     def stop(self):
         global key
@@ -45,8 +44,15 @@ class Thread(QThread):
             if path:
                 key = 'stop'
                 print("stop")
+                self.swiftCounter.stop()
         except:
             print("Can't stop -- no path")
+
+    def renderFrame(self, frame):
+        rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
+        p = convertToQtFormat.scaled(826, 461, Qt.KeepAspectRatio)
+        self.changePixmap.emit(p)
 
 
 class about(QMainWindow):

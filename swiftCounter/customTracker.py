@@ -60,11 +60,6 @@ class Tracker:
 	def lostNewBirdJustAboveChimney(self, chimneyPoints):
 		chimneyYAvg = (chimneyPoints[0][1] + chimneyPoints[1][1]) / 2
 
-		# print(chimneyYAvg)
-		# print(self.point[1])
-		# print(self.initializedJustAboveChimneySlack)
-		# print(self.point[1] + self.initializedJustAboveChimneySlack)
-
 		# if the tracker was initialized right above the chimney line and the
 		# bird was not located on the first update, assume the bird entered the chimney
 		if not self.inChimney and \
