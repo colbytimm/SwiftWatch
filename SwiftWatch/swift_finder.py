@@ -190,6 +190,8 @@ class gui(QMainWindow):
 
     def draw_clicked(self):
         # draw enterence to chimney here
+        self.showFullScreen()
+        self.play_btn.setVisible(False)
         print("draw")
 
     def set_image(self, image):
