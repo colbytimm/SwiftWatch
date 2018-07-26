@@ -11,18 +11,18 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/gui$swift_finder_copy.coverage" NAME="swift_finder copy Coverage Results" MODIFIED="1532387475507" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/gui$swift_finder_test.coverage" NAME="swift_finder_test Coverage Results" MODIFIED="1532498518443" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/gui$swift_finder_test.coverage" NAME="swift_finder_test Coverage Results" MODIFIED="1532567090305" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/comp_vis$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1528848067508" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/gui$painter_test.coverage" NAME="painter_test Coverage Results" MODIFIED="1532497707403" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/swiftCounter" />
-    <SUITE FILE_PATH="coverage/gui$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1532474935508" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/gui$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1532568617803" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="swift_finder.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="swift_finder.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/swift_finder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2639">
-              <caret line="198" column="0" lean-forward="false" selection-start-line="198" selection-start-column="0" selection-end-line="198" selection-end-column="0" />
+            <state relative-caret-position="254">
+              <caret line="194" column="12" lean-forward="true" selection-start-line="194" selection-start-column="12" selection-end-line="194" selection-end-column="12" />
               <folding>
                 <element signature="e#2#12#0" expanded="true" />
               </folding>
@@ -30,25 +30,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="swift_finder_test.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="swift_finder_test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/swift_finder_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="225" column="0" lean-forward="false" selection-start-line="225" selection-start-column="0" selection-end-line="225" selection-end-column="0" />
+            <state relative-caret-position="270">
+              <caret line="119" column="4" lean-forward="false" selection-start-line="119" selection-start-column="4" selection-end-line="143" selection-end-column="26" />
               <folding>
                 <element signature="e#2#12#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="painter_test.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/swiftCounter/painter_test.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="69">
-              <caret line="42" column="27" lean-forward="false" selection-start-line="42" selection-start-column="27" selection-end-line="42" selection-end-column="27" />
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -57,8 +45,8 @@
       <file leaf-file-name="swiftCounter.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/swiftCounter/swiftCounter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2018">
-              <caret line="250" column="31" lean-forward="false" selection-start-line="250" selection-start-column="31" selection-end-line="250" selection-end-column="31" />
+            <state relative-caret-position="-988">
+              <caret line="129" column="21" lean-forward="true" selection-start-line="129" selection-start-column="21" selection-end-line="129" selection-end-column="21" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -100,9 +88,9 @@
       <list>
         <option value="$PROJECT_DIR$/swift_finder copy.py" />
         <option value="$PROJECT_DIR$/swiftCounter/swiftCounter.py" />
-        <option value="$PROJECT_DIR$/swift_finder.py" />
-        <option value="$PROJECT_DIR$/swift_finder_test.py" />
         <option value="$PROJECT_DIR$/swiftCounter/painter_test.py" />
+        <option value="$PROJECT_DIR$/swift_finder_test.py" />
+        <option value="$PROJECT_DIR$/swift_finder.py" />
       </list>
     </option>
   </component>
@@ -176,7 +164,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.swift_finder_test">
+  <component name="RunManager" selected="Python.swift_finder">
     <configuration name="painter_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -261,9 +249,9 @@
     </list>
     <recent_temporary>
       <list size="4">
-        <item index="0" class="java.lang.String" itemvalue="Python.swift_finder_test" />
-        <item index="1" class="java.lang.String" itemvalue="Python.painter_test" />
-        <item index="2" class="java.lang.String" itemvalue="Python.swift_finder" />
+        <item index="0" class="java.lang.String" itemvalue="Python.swift_finder" />
+        <item index="1" class="java.lang.String" itemvalue="Python.swift_finder_test" />
+        <item index="2" class="java.lang.String" itemvalue="Python.painter_test" />
         <item index="3" class="java.lang.String" itemvalue="Python.swift_finder copy" />
       </list>
     </recent_temporary>
@@ -441,16 +429,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/swift_finder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2639">
-          <caret line="198" column="0" lean-forward="false" selection-start-line="198" selection-start-column="0" selection-end-line="198" selection-end-column="0" />
-          <folding>
-            <element signature="e#2#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/swift_finder copy.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="137">
@@ -467,19 +445,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/swiftCounter/swiftCounter.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2018">
-          <caret line="250" column="31" lean-forward="false" selection-start-line="250" selection-start-column="31" selection-end-line="250" selection-end-column="31" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/swiftCounter/painter_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="69">
+        <state relative-caret-position="630">
           <caret line="42" column="27" lean-forward="false" selection-start-line="42" selection-start-column="27" selection-end-line="42" selection-end-column="27" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
@@ -487,10 +455,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/swiftCounter/swiftCounter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-988">
+          <caret line="129" column="21" lean-forward="true" selection-start-line="129" selection-start-column="21" selection-end-line="129" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/swift_finder_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="225" column="0" lean-forward="false" selection-start-line="225" selection-start-column="0" selection-end-line="225" selection-end-column="0" />
+        <state relative-caret-position="270">
+          <caret line="119" column="4" lean-forward="false" selection-start-line="119" selection-start-column="4" selection-end-line="143" selection-end-column="26" />
+          <folding>
+            <element signature="e#2#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/swift_finder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="254">
+          <caret line="194" column="12" lean-forward="true" selection-start-line="194" selection-start-column="12" selection-end-line="194" selection-end-column="12" />
           <folding>
             <element signature="e#2#12#0" expanded="true" />
           </folding>

@@ -107,6 +107,43 @@ class settings(QMainWindow):
         self.prediction_checkbox.setChecked(False)
         self.erode_value.setText("0")
 
+class GraphicsScene(QGraphicsScene):
+    def __init__(self, parent=None):
+        QGraphicsScene.__init__(self, parent)
+        self.opt = ""
+        self.begin = QtCore.QPoint()
+        self.end = QtCore.QPoint()
+
+    def setOption(self, opt):
+        self.opt = opt
+
+    def paintEvent(self, event):
+        qp = QPainter(self)
+        br = QBrush(QColor(100, 10, 10, 100))
+        qp.setBrush(br)
+        if self.opt == "Rect":
+            qp.drawRect(QtCore.QRect(self.begin, self.end))
+            print("im here")
+
+        elif self.opt == "Line":
+            qp.drawLine(QtCore.QLine(self.begin, self.end))
+
+    def mousePressEvent(self, event):
+        self.begin = event.pos()
+        self.end = event.pos()
+        print(event.pos())
+        self.update()
+
+    def mouseMoveEvent(self, event):
+        self.end = event.pos()
+        self.update()
+
+    def mouseReleaseEvent(self, event):
+        self.begin = event.pos()
+        self.end = event.pos()
+        print(event.pos())
+
+
 class gui(QMainWindow):
     app_name = "SwiftWatch"
     x1 = None
@@ -118,8 +155,8 @@ class gui(QMainWindow):
         super(gui, self).__init__()
         loadUi("mainwindow.ui", self).setFixedSize(807, 450)
 
-        self.begin = QtCore.QPoint()
-        self.end = QtCore.QPoint()
+        # self.begin = QtCore.QPoint()
+        # self.end = QtCore.QPoint()
 
         self.about_dialog = about(self)
         self.setting_dialog = settings(self)
@@ -132,6 +169,10 @@ class gui(QMainWindow):
         self.settings_btn.clicked.connect(self.settings_clicked)
 
         self.initUI()
+
+        self.scene = GraphicsScene(self)
+        self.opt = ""
+        self.scene.setOption(self.opt)
 
 
     @pyqtSlot()
@@ -163,6 +204,9 @@ class gui(QMainWindow):
 
     def draw_clicked(self):
         # draw enterence to chimney here
+        self.opt = "Rect"
+        self.scene.setOption(self.opt)
+        print(self.opt)
         print("draw")
 
     def set_image(self, image):
@@ -205,24 +249,6 @@ class gui(QMainWindow):
         except:
             print("No settings box found")
 
-    def paintEvent(self, event):
-        qp = QPainter(self)
-        br = QBrush(QColor(100, 10, 10, 100))
-        qp.setBrush(br)
-        qp.drawRect(QtCore.QRect(self.begin, self.end))
-
-    def mousePressEvent(self, event):
-        self.begin = event.pos()
-        self.end = event.pos()
-        self.update()
-
-    def mouseMoveEvent(self, event):
-        self.end = event.pos()
-        self.update()
-
-    def mouseReleaseEvent(self, event):
-        self.begin = event.pos()
-        self.end = event.pos()
 
 
 if __name__ == "__main__":

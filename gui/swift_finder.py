@@ -149,6 +149,9 @@ class gui(QMainWindow):
 
         self.initUI()
 
+        self.begin = QtCore.QPoint()
+        self.end = QtCore.QPoint()
+
 
     @pyqtSlot()
     def load_clicked(self):
@@ -211,6 +214,34 @@ class gui(QMainWindow):
             self.setting_dialog.show()
         except:
             print("No settings box found")
+
+    def paintEvent(self, event):
+        qp = QPainter(self)
+
+        # Comment out to stop drawing a rectangle
+        br = QBrush(QColor(0, 255, 0, 30))
+        qp.setBrush(br)
+        qp.drawRect(QtCore.QRect(self.begin, self.end))
+
+        # Comment out to stop drawing lines
+        # pen = QPen(Qt.red, 3)
+        # qp.setPen(pen)
+        # qp.drawLine(QtCore.QLine(self.begin, self.end))
+
+    def mousePressEvent(self, event):
+        self.begin = event.pos()
+        self.end = event.pos()
+        print(event.pos())
+        self.update()
+
+    def mouseMoveEvent(self, event):
+        self.end = event.pos()
+        self.update()
+
+    def mouseReleaseEvent(self, event):
+        self.begin = event.pos()
+        self.end = event.pos()
+        print(event.pos())
 
 
 if __name__ == "__main__":
