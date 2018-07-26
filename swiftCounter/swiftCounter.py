@@ -52,7 +52,7 @@ class SwiftCounter:
 	frameCols = 0
 	frameRows = 0
 
-	_stop = False
+	_stop = True
 
 
 	def __init__(self, videoPath, renderFunc, backgroundSubtractor=1):
@@ -129,6 +129,10 @@ class SwiftCounter:
 		self._stop = True
 
 	def start(self):
+		self._stop = False
+		self.countSwifts()
+
+	def countSwifts(self):
 		while not self._stop:
 			ret, self.currentBigFrame = self.videoCapture.read()
 

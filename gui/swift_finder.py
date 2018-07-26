@@ -4,6 +4,7 @@ import sys
 import cv2
 #import imutils
 import resources #pyrcc5 -o resources.py resource.qrc
+from enum import Enum
 
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -18,6 +19,15 @@ height = 450
 ref_pt = []
 click_count = 0
 
+mainROI = ()
+chimneyPoints = ()
+
+class State(Enum):
+    LOAD_VIDEO = 0
+    DRAW_ROI = 1
+    DRAW_CHIMNEY = 2
+    RUNNING = 3
+    STOPPED = 4
 
 class Thread(QThread):
     changePixmap = pyqtSignal(QImage)
@@ -27,11 +37,16 @@ class Thread(QThread):
         path = video_path
 
     def run(self):
+        global mainROI
+        global chimneyPoints
+
         # Get the main bounding box...
         mainBBox = (440, 178, 827, 556)
 
         # Get the chimney points...
         chimneyPoints = ((755, 693), (869, 687))
+
+        # Convert to points to the correct position...
 
         self.swiftCounter = sc.SwiftCounter(file_path, self.renderFrame)
         self.swiftCounter.setMainROI(mainBBox)
@@ -39,20 +54,19 @@ class Thread(QThread):
         self.swiftCounter.start()
 
     def stop(self):
-        global key
-        try:
-            if path:
-                key = 'stop'
-                print("stop")
-                self.swiftCounter.stop()
-        except:
-            print("Can't stop -- no path")
+        self.swiftCounter.stop()
 
-    def renderFrame(self, frame):
+    def toQtFormat(self, frame):
         rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
         p = convertToQtFormat.scaled(826, 461, Qt.KeepAspectRatio)
-        self.changePixmap.emit(p)
+        return p
+
+    def renderFrame(self, frame):
+        self.changePixmap.emit(self.toQtFormat(frame))
+
+    def getPixmap(self, frame):
+        return QPixmap.fromImage(self.toQtFormat(frame))
 
 
 class about(QMainWindow):
@@ -136,12 +150,13 @@ class settings(QMainWindow):
 
 class gui(QMainWindow):
     app_name = "SwiftWatch"
+    trackerThread = None
 
     def __init__(self):
         super(gui, self).__init__()
         loadUi("mainwindow.ui", self).setFixedSize(807, 450)
 
-        self.changePixmap = pyqtSignal(QImage) ####################
+        self.changePixmap = pyqtSignal(QImage)
 
         self.about_dialog = about(self)
         self.setting_dialog = settings(self)
@@ -153,10 +168,12 @@ class gui(QMainWindow):
         self.draw_btn.clicked.connect(self.draw_clicked)
         self.settings_btn.clicked.connect(self.settings_clicked)
 
-        self.initUI()
-
         self.begin = QtCore.QPoint()
         self.end = QtCore.QPoint()
+
+        self.trackerThread = Thread(self)
+        self.trackerThread.changePixmap.connect(self.set_image)
+        self.state = State.LOAD_VIDEO
 
 
     @pyqtSlot()
@@ -172,7 +189,7 @@ class gui(QMainWindow):
         try:
             if file_path:
                 print(file_path)
-                self.initUI()
+                self.initUI(file_path)
         except:
             print("Can't play from import")
 
@@ -180,13 +197,14 @@ class gui(QMainWindow):
         try:
             if path:
                 print("Path exists {}".format(file_path))
-                self.initUI()
+                #self.initUI()
         except:
             print("Play: no path exists")
 
     def stop_clicked(self):
-        th = Thread(self)
-        th.stop()
+        if not self.trackerThread:
+            return
+        self.trackerThread.stop()
 
     def draw_clicked(self):
         # draw enterence to chimney here
@@ -195,16 +213,22 @@ class gui(QMainWindow):
     def set_image(self, image):
         self.video_label.setPixmap(QPixmap.fromImage(image))
 
-    def initUI(self):
-        th = Thread(self)
+    def initUI(self, file_path):
+        # Display the first frame
+        cap = cv2.VideoCapture(file_path)
+        ret, frame = cap.read()
 
-        try:
-            th.get_path(file_path)
-            th.changePixmap.connect(self.set_image)
-            th.start()
+        if not ret:
+            print("Failed to get first frame.")
 
-        except:
-            print("No path")
+        self.firstFramePixmap = self.trackerThread.getPixmap(frame)
+
+        # paint the frame
+        self.update()
+
+        # update the state
+        self.state = State.DRAW_ROI
+            
 
     def about_clicked(self):
         try:
@@ -222,22 +246,22 @@ class gui(QMainWindow):
             print("No settings box found")
 
     def paintEvent(self, event):
-        qp = QPainter(self)
-
-        # Comment out to stop drawing a rectangle
-        br = QBrush(QColor(0, 255, 0, 30))
-        qp.setBrush(br)
-        qp.drawRect(QtCore.QRect(self.begin, self.end))
-
-        # Comment out to stop drawing lines
-        # pen = QPen(Qt.red, 3)
-        # qp.setPen(pen)
-        # qp.drawLine(QtCore.QLine(self.begin, self.end))
+        if self.state == State.DRAW_ROI:
+            qp = QPainter(self)
+            qp.drawPixmap(self.rect(), self.firstFramePixmap)
+            br = QBrush(QColor(0, 255, 0, 30))
+            qp.setBrush(br)
+            qp.drawRect(QtCore.QRect(self.begin, self.end))
+        elif self.state == State.DRAW_CHIMNEY:
+            qp = QPainter(self)
+            qp.drawPixmap(self.rect(), self.firstFramePixmap)
+            pen = QPen(Qt.red, 3)
+            qp.setPen(pen)
+            qp.drawLine(QtCore.QLine(self.begin, self.end))
 
     def mousePressEvent(self, event):
-        self.begin = event.pos()
         self.end = event.pos()
-        print(event.pos())
+        self.begin = event.pos()
         self.update()
 
     def mouseMoveEvent(self, event):
@@ -245,9 +269,41 @@ class gui(QMainWindow):
         self.update()
 
     def mouseReleaseEvent(self, event):
-        self.begin = event.pos()
         self.end = event.pos()
-        print(event.pos())
+
+    def keyPressEvent(self, event):
+        global mainROI
+        global chimneyPoints
+
+        print("KEY PRESS", event.key())
+        key = event.key()
+        if self.state == State.DRAW_ROI:
+            if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
+                # set the main ROI
+                x = self.begin.x()
+                y = self.begin.y()
+                w = self.end.x() - x
+                h = self.end.y() - y
+                
+                self.mainROI = (x,y,w,h)
+                print("MAIN ROI SET")
+                print("begin:", self.begin, "end:", self.end, "ROI:", self.mainROI)
+
+                # update the state
+                self.state = State.DRAW_CHIMNEY
+
+        elif self.state == State.DRAW_CHIMNEY:
+            if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
+                # set the chimney points
+                chimneyPoints = ((self.begin.x(), self.begin.y()), (self.end.x(), self.end.y()))
+                print("CHIMNEY POINTS SET")
+                print("Chimney Points:", chimneyPoints)
+
+                # update the state and start tracking
+                self.state = State.RUNNING
+                self.trackerThread.start()
+
+        event.accept()
 
 
 if __name__ == "__main__":
