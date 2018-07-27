@@ -25,6 +25,39 @@ chimneyPoints = ()
 
 startCondition = threading.Condition()
 
+# Translate point from the GUI Frame position to the original CV Frame position
+def translatePointToCVFrame(guiFramePoint, guiFrameRect, cvFrameDims):
+    xRatio = cvFrameDims[0] / guiFrameRect.width()
+    yRatio = cvFrameDims[1] / guiFrameRect.height()
+
+    # subtract x black space not covered by frame
+    cvFramePointX = guiFramePoint[0] - guiFrameRect.x()
+    cvFramePointX *= xRatio
+
+    # subtract y black space not covered by frame
+    cvFramePointY = guiFramePoint[1] - guiFrameRect.y()
+    cvFramePointY *= yRatio
+
+    return (int(cvFramePointX), int(cvFramePointY))
+
+# Translate ROI from the GUI Frame position to the original CV Frame position
+def translateROIToCVFrame(guiFrameROI, guiFrameRect, cvFrameDims):
+    xRatio = cvFrameDims[0] / guiFrameRect.width()
+    yRatio = cvFrameDims[1] / guiFrameRect.height()
+
+    # subtract x black space not covered by frame
+    x = guiFrameROI[0] - guiFrameRect.x()
+    x *= xRatio
+
+    # subtract y black space not covered by frame
+    y = guiFrameROI[1] - guiFrameRect.y()
+    y *= yRatio
+
+    w = guiFrameROI[2] * xRatio
+    h = guiFrameROI[3] * yRatio
+
+    return (int(x), int(y), int(w), int(h))
+
 class State(Enum):
     LOAD_VIDEO = 0
     DRAW_ROI = 1
@@ -48,17 +81,19 @@ class Thread(QThread):
         global mainROI
         global chimneyPoints
 
-        # Get the main bounding box...
-        mainBBox = (440, 178, 827, 556)
-
-        # Get the chimney points...
-        chimneyPoints = ((755, 693), (869, 687))
-
-        # Convert to points to the correct position...
-
         self.state = State.RUNNING
         self.swiftCounter = sc.SwiftCounter(file_path, self.renderFrame, startCondition)
-        self.swiftCounter.setMainROI(mainBBox)
+
+        cvFrameDims = self.swiftCounter.getBigFrameDims()
+        guiFrameRect = self.mainWindow.getCorrectRatioRect()
+
+        # Translate the points to the correct coordinates in the CV Frame
+        chimneyPointsX = translatePointToCVFrame(chimneyPoints[0], guiFrameRect, cvFrameDims)
+        chimneyPointsY = translatePointToCVFrame(chimneyPoints[1], guiFrameRect, cvFrameDims)
+        chimneyPoints = (chimneyPointsX, chimneyPointsY)
+        mainROI = translateROIToCVFrame(mainROI, guiFrameRect, cvFrameDims)
+
+        self.swiftCounter.setMainROI(mainROI)
         self.swiftCounter.setChimneyPoints(chimneyPoints)
         self.swiftCounter.start()
 
@@ -91,7 +126,6 @@ class Thread(QThread):
 
     def getPixmap(self, frame):
         return QPixmap.fromImage(self.toQtFormat(frame))
-
 
 class About(QMainWindow):
     def __init__(self, parent=None):
@@ -329,9 +363,7 @@ class Gui(QMainWindow):
         global chimneyPoints
         global startCondition
 
-        print("KEY PRESS", event.key())
         key = event.key()
-        print("State:", self.state)
         if self.state == State.DRAW_ROI:
             if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
                 # set the main ROI
@@ -340,9 +372,7 @@ class Gui(QMainWindow):
                 w = self.end.x() - x
                 h = self.end.y() - y
                 
-                self.mainROI = (x,y,w,h)
-                print("MAIN ROI SET")
-                print("begin:", self.begin, "end:", self.end, "ROI:", self.mainROI)
+                mainROI = (x,y,w,h)
 
                 # update the state
                 self.state = State.DRAW_CHIMNEY
@@ -351,8 +381,6 @@ class Gui(QMainWindow):
             if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
                 # set the chimney points
                 chimneyPoints = ((self.begin.x(), self.begin.y()), (self.end.x(), self.end.y()))
-                print("CHIMNEY POINTS SET")
-                print("Chimney Points:", chimneyPoints)
 
                 # update the state and start tracking
                 self.state = State.RUNNING

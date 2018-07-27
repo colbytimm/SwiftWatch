@@ -84,6 +84,9 @@ class SwiftCounter:
 		else:
 			self.renderFunc(self.currentBigFrame)
 
+	def getBigFrameDims(self):
+		return (self.bigFrameCols, self.bigFrameRows)
+
 	def setBackgroundSubtractor(self, index):
 		if index == 0:
 			self.backgroundSubtractor = cv.createBackgroundSubtractorMOG()
