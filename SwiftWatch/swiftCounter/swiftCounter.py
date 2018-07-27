@@ -2,7 +2,8 @@ import numpy as np
 import cv2 as cv
 import swiftCounter.customTracker as ct
 import swiftCounter.swiftHelper as sh
-import time
+from datetime import datetime, timedelta
+import csv
 import threading
 
 class SwiftCounter:
@@ -58,6 +59,8 @@ class SwiftCounter:
 	_stop = False
 	startCondition = None
 
+	cachedTimeStamps = []
+
 
 	def __init__(self, videoPath, renderFunc, startCondition, backgroundSubtractor=1):
 		self.videoPath = videoPath
@@ -66,6 +69,7 @@ class SwiftCounter:
 		self.setBackgroundSubtractor(backgroundSubtractor)
 
 		self.videoCapture = cv.VideoCapture(videoPath)
+
 		ret, self.currentBigFrame = self.videoCapture.read()
 
 		if not ret:
@@ -138,7 +142,44 @@ class SwiftCounter:
 	def start(self):
 		self.countSwifts()
 
+	def cacheTimeStamp(self, current_frame, fps, videoPath):
+		# Caches time stamps for each bird
+		self.time = self.getTimeStamp(current_frame, fps, videoPath)
+		self.cachedTimeStamps.append(self.time)
+
+	def getTimeStamp(self, current_frame, fps, videoPath):
+		# This function takes the video start time and adds the currenrt seconds that have passed to it
+		self.videoString = videoPath.split("/")
+		self.videoStringLen = len(self.videoString) - 1
+		self.videoName = self.videoString[self.videoStringLen].split("_")[1].split('.mov')[0]
+
+		self.datetime_object = datetime.strptime(self.videoName, '%Y%m%d%H%M%S')
+		self.current_time_object = int(datetime.fromtimestamp(int(current_frame / fps)).strftime('%H%M%S'))
+		self.datetime_object += timedelta(seconds=self.current_time_object)
+
+		return self.datetime_object.time()
+
+	def getVideoName(self, videoPath):
+		videoString = videoPath.split("/")
+		videoStringLen = len(videoString) - 1
+		videoName = videoString[videoStringLen]
+		return videoName
+
+	def writeToCSV(self, filePath, videoPath):
+		self.videoName = self.getVideoName(videoPath)
+		self.writeToCSV = [["Filename","Time","Swift Entering"]]
+		for num in range(len(self.cachedTimeStamps)):
+			self.writeToCSV.append([self.videoName,self.cachedTimeStamps[num],"1"])
+
+		self.myFile = open(filePath, 'w')
+		with self.myFile:
+			self.writer = csv.writer(self.myFile)
+			self.writer.writerows(self.myData)
+
 	def countSwifts(self):
+		count = 0
+		fps = self.videoCapture.get(cv.CAP_PROP_FPS)
+
 		while True:
 			ret, self.currentBigFrame = self.videoCapture.read()
 
@@ -182,6 +223,8 @@ class SwiftCounter:
 				self._stop = False
 				with self.startCondition:
 					self.startCondition.wait()
+
+			count += 1
 
 			#check if video is finished
 			k = cv.waitKey(1) & 0xff
