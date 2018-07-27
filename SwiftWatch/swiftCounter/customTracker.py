@@ -1,6 +1,7 @@
 import numpy as np
 import cv2 as cv
 import swiftCounter.swiftHelper as sh
+#import swiftHelper as sh
 
 # =============== CUSTOM TRACKER CLASS ===============
 
@@ -80,7 +81,7 @@ class Tracker:
 	def __drawBbox(self, frame, colour, bBox):
 		p1 = (int(bBox[0]), int(bBox[1]))
 		p2 = (int(bBox[0] + bBox[2]), int(bBox[1] + bBox[3]))
-		cv.rectangle(frame, p1, p2, colour, 1, 1)
+		cv.rectangle(frame, p1, p2, colour, 2, 1)
 
 	def getBBox(self):
 		return self.bBox
