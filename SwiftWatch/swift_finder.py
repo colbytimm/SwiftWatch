@@ -1,10 +1,8 @@
 import sys
 import cv2
-#import imutils
 import resources #pyrcc5 -o resources.py resource.qrc
 from enum import Enum
 import threading
-import math
 
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -12,7 +10,6 @@ from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
 from PyQt5 import QtCore
 import swiftCounter.swiftCounter as sc
-import random
 
 width = 800
 height = 450

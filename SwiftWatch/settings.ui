@@ -165,7 +165,7 @@
 }</string>
    </property>
    <property name="text">
-    <string>Contour View</string>
+    <string>Show Contour View</string>
    </property>
   </widget>
   <widget class="QLabel" name="dilate">
@@ -228,7 +228,7 @@
 }</string>
    </property>
    <property name="text">
-    <string>Remove Video View</string>
+    <string>Show Video</string>
    </property>
   </widget>
   <widget class="QLabel" name="prediction">
@@ -248,7 +248,7 @@
 }</string>
    </property>
    <property name="text">
-    <string>Prediction</string>
+    <string>Show Prediction Lines</string>
    </property>
   </widget>
   <widget class="QLabel" name="bounding">
@@ -268,7 +268,7 @@
 }</string>
    </property>
    <property name="text">
-    <string>Bounding Box</string>
+    <string>Show Bounding Boxes</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="contour_checkbox">
