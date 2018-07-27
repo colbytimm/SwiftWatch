@@ -208,7 +208,7 @@ class Settings(QMainWindow):
 
 class Export(QDialog):
     def __init__(self, parent=None):
-        super(Export, self).__init__()
+        super(Export, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
         loadUi("CSV_exporter.ui", self).setFixedSize(395, 161)
 
         self.export_btn.clicked.connect(self.export_clicked)
@@ -217,12 +217,14 @@ class Export(QDialog):
 
     def export_clicked(self):
         print("Export")
+        self.close()
 
     def dont_export_clicked(self):
         print("Don't export")
+        self.close()
 
     def cancel_clicked(self):
-        print("Cancel")
+        self.close()
 
 class Gui(QMainWindow):
     trackerThread = None
