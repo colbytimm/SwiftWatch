@@ -176,7 +176,7 @@ class gui(QMainWindow):
     def __init__(self):
         super(gui, self).__init__()
         #loadUi("mainwindow.ui", self).setFixedSize(807, 450)
-        loadUi("mainwindow_presentation copy.ui", self)#.setFixedSize(1050, 589)
+        loadUi("mainwindow.ui", self)#.setFixedSize(1050, 589)
         # dockWidget = self.findChild("dockWidget_2")
         # print(dockWidget)
         self.changePixmap = pyqtSignal(QImage)
