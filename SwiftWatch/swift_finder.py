@@ -340,16 +340,19 @@ class Gui(QMainWindow):
     def paintEvent(self, event):
         qp = QPainter(self)
         if self.state == State.DRAW_ROI:
+            self.display_text.setText("Select Region of Interest")
             qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
             br = QBrush(QColor(0, 255, 0, 30))
             qp.setBrush(br)
             qp.drawRect(QtCore.QRect(self.begin, self.end))
         elif self.state == State.DRAW_CHIMNEY:
+            self.display_text.setText("Select Entrance of Chimney")
             qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
             pen = QPen(Qt.red, 3)
             qp.setPen(pen)
             qp.drawLine(QtCore.QLine(self.begin, self.end))
         elif self.state == State.RUNNING:
+            self.display_text.setText("")
             qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
 
     def mousePressEvent(self, event):
