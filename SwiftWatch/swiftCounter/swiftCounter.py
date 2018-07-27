@@ -5,6 +5,30 @@ import swiftCounter.swiftHelper as sh
 from datetime import datetime, timedelta
 import csv
 import threading
+from enum import Enum
+
+class Settings(Enum):
+    TRACKER = 0
+    BACKGROUND_SUBTRACTOR = 1
+    ERODE_ITERATIONS = 2
+    DILATE_ITERATIONS = 3
+    SHOW_CONTOURS = 4
+    SHOW_VIDEO = 5
+    SHOW_PREDICTION_LINES = 6
+    SHOW_BOUNDING_BOXES = 7
+    REMOVE_EMPTY_TRACKERS = 8
+
+settings = {
+    Settings.TRACKER: 0,
+    Settings.BACKGROUND_SUBTRACTOR: 0,
+    Settings.ERODE_ITERATIONS: 1,
+    Settings.DILATE_ITERATIONS: 1,
+    Settings.SHOW_CONTOURS: False,
+    Settings.SHOW_VIDEO: True,
+    Settings.SHOW_PREDICTION_LINES: True,
+    Settings.SHOW_BOUNDING_BOXES: True,
+    Settings.REMOVE_EMPTY_TRACKERS: True
+}
 
 class SwiftCounter:
 
@@ -61,6 +85,8 @@ class SwiftCounter:
 
 	cachedTimeStamps = []
 
+	showPredictionLines = True
+
 
 	def __init__(self, videoPath, renderFunc, displayCountFunc, startCondition, backgroundSubtractor=1):
 		self.videoPath = videoPath
@@ -81,6 +107,9 @@ class SwiftCounter:
 		self.renderFunc(self.currentBigFrame)
 		self.bigFrameRows = len(self.currentBigFrame)
 		self.bigFrameCols = len(self.currentBigFrame[0])
+
+	def updateSetting(self, setting, value):
+		settings[setting] = value
 
 	# Convert to correct format and render in gui
 	def renderMainFrame(self):
@@ -263,18 +292,20 @@ class SwiftCounter:
 						continue
 
 				if self.showFrames:
-					#tracker.drawBbox(maskFrame, (255,0,0))
-					tracker.drawShrunkBbox(maskFrame, (255,0,0))
-					#tracker.drawBbox(self.currentSmallFrame, (255,0,0))
-					tracker.drawShrunkBbox(self.currentSmallFrame, (255,0,0))
+					if settings[Settings.SHOW_BOUNDING_BOXES]:
+						#tracker.drawBbox(maskFrame, (255,0,0))
+						tracker.drawShrunkBbox(maskFrame, (255,0,0))
+						#tracker.drawBbox(self.currentSmallFrame, (255,0,0))
+						tracker.drawShrunkBbox(self.currentSmallFrame, (255,0,0))
 
-					# draw the line to the predicted point
-					point = tracker.getPoint()
-					ppoint = tracker.predictNextPoint()
-					if point is not None and ppoint is not None:
-						point = (int(point[0]), int(point[1]))
-						ppoint = (int(ppoint[0]), int(ppoint[1]))
-						cv.line(self.currentSmallFrame, point, ppoint, (0, 255, 0), 1)
+					if self.showPredictionLines:
+						# draw the line to the predicted point
+						point = tracker.getPoint()
+						ppoint = tracker.predictNextPoint()
+						if point is not None and ppoint is not None:
+							point = (int(point[0]), int(point[1]))
+							ppoint = (int(ppoint[0]), int(ppoint[1]))
+							cv.line(self.currentSmallFrame, point, ppoint, (0, 255, 0), 1)
 
 
 				if tracker.enteredChimney(self.chimneyPoints):
@@ -336,7 +367,7 @@ class SwiftCounter:
 				customTracker = ct.Tracker(maskFrame, cvTracker, centerPoint, (x,y,w,h))
 				self.trackers.append(customTracker)
 
-				if self.showFrames:
+				if self.showFrames and settings[Settings.SHOW_BOUNDING_BOXES]:
 					customTracker.drawShrunkBbox(maskFrame, (0,0,255))
 					customTracker.drawShrunkBbox(self.currentSmallFrame, (0,0,255))
 

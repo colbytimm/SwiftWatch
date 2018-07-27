@@ -126,7 +126,6 @@ class Thread(QThread):
         self.mainWindow.update_current_frame_pixmap(self.getPixmap(frame))
         self.mainWindow.update()
 
-
     def getPixmap(self, frame):
         return QPixmap.fromImage(self.toQtFormat(frame))
 
@@ -169,35 +168,37 @@ class Settings(QMainWindow):
 
     def contour_checkbox_selection(self):
         # set contour view here
-        if self.contour_checkbox.isChecked() == True:
+        if self.contour_checkbox.isChecked():
             print("Contour view selected")
         else:
             print("Not using contour view")
 
     def prediction_checkbox_selection(self):
-        # set contour view here
-        if self.prediction_checkbox.isChecked() == True:
+        if self.prediction_checkbox.isChecked():
             print("Prediction view selected")
+
         else:
             print("Not using prediction view")
 
     def video_checkbox_selection(self):
         # set contour view here
-        if self.video_checkbox.isChecked() == True:
+        if self.video_checkbox.isChecked():
             print("Video view removed selected")
         else:
             print("Video view shown")
 
     def bounding_checkbox_selection(self):
         # set contour view here
-        if self.bounding_checkbox.isChecked() == True:
+        if self.bounding_checkbox.isChecked():
+            sc.settings[sc.Settings.SHOW_BOUNDING_BOXES] = True
             print("Bounding view selected")
         else:
+            sc.settings[sc.Settings.SHOW_BOUNDING_BOXES] = False
             print("Not using bounding view")
 
     def empty_tracker_checkbox_selection(self):
         # set contour view here
-        if self.empty_tracker_checkbox.isChecked() == True:
+        if self.empty_tracker_checkbox.isChecked():
             print("Remove empty tracker selected")
         else:
             print("Using empty tracker")
