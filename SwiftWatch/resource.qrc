@@ -15,6 +15,7 @@
         <file>images/settings_btn_hover.svg</file>
         <file>images/about_background.svg</file>
         <file>images/edit_btn_hover.svg</file>
-        <file>images/swiftfinder_logo.svg</file>
+        <file>images/export_btn.svg</file>
+        <file>images/export_btn_hover.svg</file>
     </qresource>
 </RCC>
