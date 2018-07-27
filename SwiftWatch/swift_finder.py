@@ -34,11 +34,11 @@ class State(Enum):
 
 class Thread(QThread):
     changePixmap = pyqtSignal(QImage)
+    state = State.LOAD_VIDEO
 
     def __init__(self, mainWindow):
         super(Thread, self).__init__()
         self.mainWindow = mainWindow
-        print(self.mainWindow)
 
     def get_path(self, video_path):
         global path
@@ -70,6 +70,7 @@ class Thread(QThread):
     def play(self):
         global startCondition
         if self.state == State.STOPPED:
+            self.swiftCounter.play()
             with startCondition:
                 startCondition.notifyAll()
             self.state = State.RUNNING
@@ -82,7 +83,7 @@ class Thread(QThread):
 
     def renderFrame(self, frame):
         #self.changePixmap.emit(self.toQtFormat(frame))
-        # super().firstFramePixmap = frame
+        # super().currentFramePixmap = frame
         # super().setFrame()
         self.mainWindow.update_current_frame_pixmap(self.getPixmap(frame))
         self.mainWindow.update()
@@ -198,10 +199,10 @@ class gui(QMainWindow):
         self.begin = QtCore.QPoint()
         self.end = QtCore.QPoint()
 
+        self.state = State.LOAD_VIDEO
         self.trackerThread = Thread(self)
         self.trackerThread.changePixmap.connect(self.set_image)
-        self.state = State.LOAD_VIDEO
-
+        
 
     @pyqtSlot()
     def load_clicked(self):
@@ -221,16 +222,12 @@ class gui(QMainWindow):
             print("Can't play from import")
 
     def update_current_frame_pixmap(self, framePixmap):
-        self.firstFramePixmap = framePixmap
+        self.currentFramePixmap = framePixmap
 
     def play_clicked(self):
-        if not self.trackerThread:
-            return
         self.trackerThread.play()
 
     def stop_clicked(self):
-        if not self.trackerThread:
-            return
         self.trackerThread.stop()
 
     def draw_clicked(self):
@@ -249,7 +246,7 @@ class gui(QMainWindow):
         if not ret:
             print("Failed to get first frame.")
 
-        self.firstFramePixmap = self.trackerThread.getPixmap(frame)
+        self.currentFramePixmap = self.trackerThread.getPixmap(frame)
         self.frameDims = (len(frame[0]), len(frame))
 
         # paint the frame
@@ -277,21 +274,17 @@ class gui(QMainWindow):
     def paintEvent(self, event):
         qp = QPainter(self)
         if self.state == State.DRAW_ROI:
-            qp.drawPixmap(self.rect(), self.firstFramePixmap)
+            qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
             br = QBrush(QColor(0, 255, 0, 30))
             qp.setBrush(br)
             qp.drawRect(QtCore.QRect(self.begin, self.end))
         elif self.state == State.DRAW_CHIMNEY:
-            qp.drawPixmap(self.rect(), self.firstFramePixmap)
+            qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
             pen = QPen(Qt.red, 3)
             qp.setPen(pen)
             qp.drawLine(QtCore.QLine(self.begin, self.end))
         elif self.state == State.RUNNING:
-            print(self.frameDims)
-            #rect = QRect(0, 0, self.frameDims[0], self.frameDims[1])
-            rect = self.getCorrectRatioRect()
-            print(self.rect())
-            qp.drawPixmap(rect, self.firstFramePixmap)
+            qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
 
     def mousePressEvent(self, event):
         self.end = event.pos()
@@ -308,9 +301,11 @@ class gui(QMainWindow):
     def keyPressEvent(self, event):
         global mainROI
         global chimneyPoints
+        global startCondition
 
         print("KEY PRESS", event.key())
         key = event.key()
+        print("State:", self.state)
         if self.state == State.DRAW_ROI:
             if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
                 # set the main ROI
@@ -337,36 +332,40 @@ class gui(QMainWindow):
                 self.state = State.RUNNING
                 self.trackerThread.start()
 
+        elif self.trackerThread.state == State.STOPPED:
+            # allow single frame skipping if stopped
+            if key == QtCore.Qt.Key_Right:
+                with startCondition:
+                    startCondition.notifyAll()
         event.accept()
 
     def getCorrectRatioRect(self):
+        correctRect = QRect()
+
         guiW = self.rect().width()
         guiH = self.rect().height()
         frameW = self.frameDims[0]
         frameH = self.frameDims[1]
 
-        correctRect = QRect()
-
         wRatio = frameW / guiW
         hRatio = frameH / guiH
-
         wRatioCorrected = abs(wRatio - 1)
         hRatioCorrected = abs(hRatio - 1)
 
         if wRatioCorrected <= hRatioCorrected:
-            # width is closer than height
-            # make the height the same then adjust the width
+            # Width is closer than height. Make the frame height the same as the gui 
+            # height then adjust the width to preserve aspect ratio
             w = frameW / hRatio
             h = guiH
             x = (guiW - w) / 2
             y = 0
-
         else:
+            # Height is closer than width. Make the frame width the same as the gui 
+            # width then adjust the height to preserve aspect ratio
             w = guiW
             h = frameH / wRatio
             x = 0
             y = (guiH - h) / 2
-
 
         return QRect(x, y, w, h)
 
