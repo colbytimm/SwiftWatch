@@ -76,12 +76,7 @@ class Thread(QThread):
         rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
         #p = convertToQtFormat.scaled(826, 461, Qt.KeepAspectRatio)
-<<<<<<< HEAD
-        p = convertToQtFormat.scaled(1050, 589, Qt.KeepAspectRatio)
-        return p
-=======
         return convertToQtFormat
->>>>>>> 613b2759d2868a5421a5eee48ec48e687b3e21cb
 
     def renderFrame(self, frame):
         #self.changePixmap.emit(self.toQtFormat(frame))
