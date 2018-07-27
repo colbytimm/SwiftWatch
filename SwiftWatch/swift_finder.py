@@ -4,6 +4,7 @@ import cv2
 import resources #pyrcc5 -o resources.py resource.qrc
 from enum import Enum
 import threading
+import math
 
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -275,6 +276,7 @@ class Gui(QMainWindow):
             print("Failed to get first frame.")
 
         self.firstFramePixmap = self.trackerThread.getPixmap(frame)
+        self.frameDims = (len(frame[0]), len(frame))
 
         # paint the frame
         self.update()
@@ -311,7 +313,11 @@ class Gui(QMainWindow):
             qp.setPen(pen)
             qp.drawLine(QtCore.QLine(self.begin, self.end))
         elif self.state == State.RUNNING:
-            qp.drawPixmap(self.rect(), self.firstFramePixmap)
+            print(self.frameDims)
+            #rect = QRect(0, 0, self.frameDims[0], self.frameDims[1])
+            rect = self.getCorrectRatioRect()
+            print(self.rect())
+            qp.drawPixmap(rect, self.firstFramePixmap)
 
     def mousePressEvent(self, event):
         self.end = event.pos()
@@ -358,6 +364,40 @@ class Gui(QMainWindow):
                 self.trackerThread.start()
 
         event.accept()
+
+    def getCorrectRatioRect(self):
+        guiW = self.rect().width()
+        guiH = self.rect().height()
+        frameW = self.frameDims[0]
+        frameH = self.frameDims[1]
+
+        correctRect = QRect()
+
+        wRatio = frameW / guiW
+        hRatio = frameH / guiH
+
+        wRatioCorrected = abs(wRatio - 1)
+        hRatioCorrected = abs(hRatio - 1)
+
+        if wRatioCorrected <= hRatioCorrected:
+            # width is closer than height
+            # make the height the same then adjust the width
+            w = frameW / hRatio
+            h = guiH
+            x = (guiW - w) / 2
+            y = 0
+
+        else:
+            w = guiW
+            h = frameH / wRatio
+            x = 0
+            y = (guiH - h) / 2
+
+
+        return QRect(x, y, w, h)
+
+
+
 
 
 if __name__ == "__main__":

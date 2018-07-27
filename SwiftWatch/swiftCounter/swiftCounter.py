@@ -50,8 +50,10 @@ class SwiftCounter:
 	cvTrackerIndex = 0
 	trackers = []
 
-	frameCols = 0
-	frameRows = 0
+	bigFrameCols = 0
+	bigFrameRows = 0
+	smallFrameCols = 0
+	smallFrameRows = 0
 
 	_stop = False
 	startCondition = None
@@ -66,12 +68,14 @@ class SwiftCounter:
 		self.videoCapture = cv.VideoCapture(videoPath)
 		ret, self.currentBigFrame = self.videoCapture.read()
 
-		# always render the big frame first
-		self.renderFunc(self.currentBigFrame)
-
 		if not ret:
 			print('Failed to read first frame - aborting program.')
 			quit() # Probably change this to display an error message
+
+		# always render the big frame first
+		self.renderFunc(self.currentBigFrame)
+		self.bigFrameRows = len(self.currentBigFrame)
+		self.bigFrameCols = len(self.currentBigFrame[0])
 
 	# Convert to correct format and render in gui
 	def renderMainFrame(self):
@@ -101,8 +105,8 @@ class SwiftCounter:
 
 	def setMainROI(self, mainBBox):
 		self.mainBBox = mainBBox
-		self.frameCols = mainBBox[2]
-		self.frameRows = mainBBox[3]
+		self.smallFrameCols = mainBBox[2]
+		self.smallFrameRows = mainBBox[3]
 		sh.drawBoundingBox(self.currentBigFrame, self.mainBBox)
 		# always render the big frame here
 		self.renderFunc(self.currentBigFrame)
@@ -261,7 +265,7 @@ class SwiftCounter:
 
 			# extra check to make sure bounding box is in the frame and has a width and heigt
 			# of at least 1
-			if x < 0 or (x + w) > self.frameCols or y < 0 or (y + h) > self.frameRows or w < 1 or h < 1:
+			if x < 0 or (x + w) > self.smallFrameCols or y < 0 or (y + h) > self.smallFrameRows or w < 1 or h < 1:
 				continue 
 
 			# expand the bounding box size
