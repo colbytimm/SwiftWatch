@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1049</width>
+    <height>586</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget#MainWindow{
+	background-color: rgb(0, 0, 0);
+}</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetFixedSize</enum>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="draw_btn">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Draw&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+	background-color: rgb(0, 0, 0, 0);
+	border-radius: 25px;
+	border: 10px rgb(0, 0, 0, 0);
+	image: url(:/images/edit_btn.svg) 2 2 2 2 stretch stretch;
+	background-repeat: no-repeat;
+}
+
+QPushButton:hover {
+    image: url(:/images/edit_btn_hover.svg) 2 2 2 2 stretch stretch;
+}
+
+QPushButton:pressed {
+    
+}
+
+QToolTip {
+	background-color: rgb(0, 0, 0);
+    border-radius: 6px;
+	color : white;
+	padding: 2px;
+    opacity: 200;
+	font: 75 13pt &quot;Arial&quot;;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="about_btn">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;About&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+	background-color: rgb(0, 0, 0, 0);
+	border-radius: 25px;
+	border: 10px rgb(0, 0, 0, 0);
+	image: url(:/images/info_btn.svg) 2 2 2 2 stretch stretch;
+	background-repeat: no-repeat;
+}
+
+QPushButton:hover {
+    image: url(:/images/info_btn_hover.svg) 2 2 2 2 stretch stretch;
+}
+
+QPushButton:pressed {
+    
+}
+
+QToolTip {
+	background-color: rgb(0, 0, 0);
+    border-radius: 6px;
+	color : white;
+	padding: 2px;
+    opacity: 200;
+	font: 75 13pt &quot;Arial&quot;;
+}
+</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="settings_btn">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Settings&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+	background-color: rgb(0, 0, 0, 0);
+	border-radius: 25px;
+	border: 10px rgb(0, 0, 0, 0);
+	image: url(:/images/settings_btn.svg) 2 2 2 2 stretch stretch;
+	background-repeat: no-repeat;
+}
+
+QPushButton:hover {
+    image: url(:/images/settings_btn_hover.svg) 2 2 2 2 stretch stretch;
+}
+
+QPushButton:pressed {
+    
+}
+
+QToolTip {
+	background-color: rgb(0, 0, 0);
+    border-radius: 6px;
+	color : white;
+	padding: 2px;
+    opacity: 200;
+	font: 75 13pt &quot;Arial&quot;;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="stop_btn">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Stop&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+	background-color: rgb(0, 0, 0, 0);
+	border-radius: 25px;
+	border: 10px rgb(0, 0, 0, 0);
+	image: url(:/images/stop_btn.svg) 2 2 2 2 stretch stretch;
+	background-repeat: no-repeat;
+}
+
+QPushButton:hover {
+	image: url(:/images/stop_btn_hover.svg) 2 2 2 2 stretch stretch;
+}
+
+QPushButton:pressed {
+    
+}
+
+QToolTip {
+	background-color: rgb(0, 0, 0);
+    border-radius: 6px;
+	color : white;
+	padding: 2px;
+    opacity: 200;
+	font: 75 13pt &quot;Arial&quot;;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="load_btn">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Import&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+	background-color: rgb(0, 0, 0, 0);
+	border-radius: 25px;
+	border: 10px rgb(0, 0, 0, 0);
+	image: url(:/images/import_btn.svg) 2 2 2 2 stretch stretch;
+	background-repeat: no-repeat;
+}
+
+QPushButton:hover {
+    image: url(:/images/import_btn_hover.svg) 2 2 2 2 stretch stretch;
+}
+
+QPushButton:pressed {
+  
+}
+
+QToolTip {
+	background-color: rgb(0, 0, 0);
+    border-radius: 6px;
+	color : white;
+	padding: 2px;
+    opacity: 200;
+	font: 75 13pt &quot;Arial&quot;;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="play_btn">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Play&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+	background-color: rgb(0, 0, 0, 0);
+	border-radius: 25px;
+	border: 10px rgb(0, 0, 0, 0);
+	image: url(:/images/play_btn.svg) 2 2 2 2 stretch stretch;
+	background-repeat: no-repeat;
+}
+
+QPushButton:hover {
+    image: url(:/images/play_btn_hover.svg) 2 2 2 2 stretch stretch;
+}
+
+QPushButton:pressed {
+    
+}
+
+QToolTip {
+	background-color: rgb(0, 0, 0);
+    border-radius: 6px;
+	color : white;
+	padding: 2px;
+    opacity: 200;
+	font: 75 13pt &quot;Arial&quot;;
+}
+</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <spacer name="verticalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
