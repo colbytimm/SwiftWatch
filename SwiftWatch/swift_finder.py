@@ -110,6 +110,11 @@ class Thread(QThread):
                 startCondition.notifyAll()
             self.state = State.RUNNING
 
+    def toggleZoomMainROI(self):
+        if self.state != State.LOAD_VIDEO:
+            # tacker is initialized
+            self.swiftCounter.renderSmallFrame =  not self.swiftCounter.renderSmallFrame
+
     def toQtFormat(self, frame):
         rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
@@ -152,39 +157,48 @@ class Settings(QMainWindow):
 
     def tracker_selection(self):
         # set tracker here
+        sc.settings[sc.Settings.TRACKER] = self.tracker_combo.currentText()
         print(self.tracker_combo.currentText())
 
     def bckgrnd_sub_selection(self):
         # set background subtraction here
+        sc.settings[sc.Settings.BACKGROUND_SUBTRACTOR] = self.bckgrnd_sub_combo.currentText()
         print(self.bckgrnd_sub_combo.currentText())
 
     def erode_value_selection(self):
         # set erode value here
+        sc.settings[sc.Settings.ERODE_ITERATIONS] = self.erode_value.value()
         print(self.erode_value.value())
 
     def dilate_value_selection(self):
         # set erode value here
+        sc.settings[sc.Settings.DILATE_ITERATIONS] = self.dilate_value.value()
         print(self.dilate_value.value())
 
     def contour_checkbox_selection(self):
         # set contour view here
         if self.contour_checkbox.isChecked():
+            sc.settings[sc.Settings.SHOW_CONTOURS] = True
             print("Contour view selected")
         else:
+            sc.settings[sc.Settings.SHOW_CONTOURS] = False
             print("Not using contour view")
 
     def prediction_checkbox_selection(self):
         if self.prediction_checkbox.isChecked():
+            sc.settings[sc.Settings.SHOW_PREDICTION_LINES] = True
             print("Prediction view selected")
-
         else:
+            sc.settings[sc.Settings.SHOW_PREDICTION_LINES] = False
             print("Not using prediction view")
 
     def video_checkbox_selection(self):
         # set contour view here
         if self.video_checkbox.isChecked():
+            sc.settings[sc.Settings.SHOW_VIDEO] = True
             print("Video view removed selected")
         else:
+            sc.settings[sc.Settings.SHOW_VIDEO] = False
             print("Video view shown")
 
     def bounding_checkbox_selection(self):
@@ -199,8 +213,10 @@ class Settings(QMainWindow):
     def empty_tracker_checkbox_selection(self):
         # set contour view here
         if self.empty_tracker_checkbox.isChecked():
+            sc.settings[sc.Settings.REMOVE_EMPTY_TRACKERS] = True
             print("Remove empty tracker selected")
         else:
+            sc.settings[sc.Settings.REMOVE_EMPTY_TRACKERS] = False
             print("Using empty tracker")
 
     def reset_defaults_clicked(self):
@@ -237,8 +253,7 @@ class Gui(QMainWindow):
         super(Gui, self).__init__()
         #loadUi("mainwindow.ui", self).setFixedSize(807, 450)
         loadUi("mainwindow.ui", self)#.setFixedSize(1050, 589)
-        # dockWidget = self.findChild("dockWidget_2")
-        # print(dockWidget)
+
         self.changePixmap = pyqtSignal(QImage)
 
         self.about_dialog = About(self)
@@ -249,9 +264,10 @@ class Gui(QMainWindow):
         self.play_btn.clicked.connect(self.play_clicked)
         self.about_btn.clicked.connect(self.about_clicked)
         self.stop_btn.clicked.connect(self.stop_clicked)
-        self.draw_btn.clicked.connect(self.draw_clicked)
+        #self.draw_btn.clicked.connect(self.draw_clicked)
         self.settings_btn.clicked.connect(self.settings_clicked)
         self.export_btn.clicked.connect(self.export_clicked)
+        self.draw_btn.clicked.connect(self.toggle_zoom_main_ROI)
 
         self.lcdNumber.display(0)
 
@@ -341,16 +357,33 @@ class Gui(QMainWindow):
         qp = QPainter(self)
         if self.state == State.DRAW_ROI:
             self.display_text.setText("Select Region of Interest")
+
+            # draw the frame
             qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
+
+            # draw the main ROI
             br = QBrush(QColor(0, 255, 0, 30))
             qp.setBrush(br)
             qp.drawRect(QtCore.QRect(self.begin, self.end))
+
         elif self.state == State.DRAW_CHIMNEY:
             self.display_text.setText("Select Entrance of Chimney")
+
+            # draw the frame
             qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
+
+            # draw the main ROI
+            roiBegin = QtCore.QPoint(mainROI[0], mainROI[1])
+            roiEnd = QtCore.QPoint(mainROI[0] + mainROI[2], mainROI[1] + mainROI[3])
+            br = QBrush(QColor(0, 255, 0, 30))
+            qp.setBrush(br)
+            qp.drawRect(QtCore.QRect(roiBegin, roiEnd))
+
+            # draw the chimney line
             pen = QPen(Qt.red, 3)
             qp.setPen(pen)
             qp.drawLine(QtCore.QLine(self.begin, self.end))
+
         elif self.state == State.RUNNING:
             self.display_text.setText("")
             qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
@@ -382,6 +415,8 @@ class Gui(QMainWindow):
                 h = self.end.y() - y
                 
                 mainROI = (x,y,w,h)
+
+                print(self.begin, self.end)
 
                 # update the state
                 self.state = State.DRAW_CHIMNEY
@@ -431,6 +466,9 @@ class Gui(QMainWindow):
             y = (guiH - h) / 2
 
         return QRect(x, y, w, h)
+
+    def toggle_zoom_main_ROI(self):
+        self.trackerThread.toggleZoomMainROI()
 
 
 

@@ -2,6 +2,8 @@ import numpy as np
 import cv2 as cv
 import swiftCounter.customTracker as ct
 import swiftCounter.swiftHelper as sh
+# import customTracker as ct
+# import swiftHelper as sh
 from datetime import datetime, timedelta
 import csv
 import threading
@@ -18,12 +20,13 @@ class Settings(Enum):
     SHOW_BOUNDING_BOXES = 7
     REMOVE_EMPTY_TRACKERS = 8
 
+# Default Settings
 settings = {
-    Settings.TRACKER: 0,
-    Settings.BACKGROUND_SUBTRACTOR: 0,
+    Settings.TRACKER: 'MOSSE',
+    Settings.BACKGROUND_SUBTRACTOR: 'MOG2',
     Settings.ERODE_ITERATIONS: 1,
     Settings.DILATE_ITERATIONS: 1,
-    Settings.SHOW_CONTOURS: False,
+    Settings.SHOW_CONTOURS: False, # NOT IMPLEMENTED
     Settings.SHOW_VIDEO: True,
     Settings.SHOW_PREDICTION_LINES: True,
     Settings.SHOW_BOUNDING_BOXES: True,
@@ -37,26 +40,16 @@ class SwiftCounter:
 	currentBigFrame = None
 	currentSmallFrame = None
 
-	instructionTextColour = (204, 51, 0)
-
-	showFrames = True
-	frameByFrame = False
+	# Render large frame if False
 	renderSmallFrame = False
-
-	erodeIterations = 1
-	dilateIterations = 1
-
-	imageScale = 0.5
 
 	# points relate to position on the small frame (main bounding box)
 	chimneyPoints = []
-	drawingChimneyLine = False
 
 	# 40 min area seems to work okay
 	minContourArea = 40
 	maxContourArea = 160
 	maxStaleCount = 3
-	removeEmptyTrackers = True
 	dropContourOutsideSizeRange = False
 
 	# determines if trackers should be created for countours inside
@@ -69,10 +62,9 @@ class SwiftCounter:
 	enteredChimneyCount = 0
 	enteredChimneyCountFromPrediction = 0
 	enteredChimneyCountFromLostAboveChimney = 0
-	exitedChimneyCount = 0
+	#exitedChimneyCount = 0
 
 	totalTrackersCreated = 0
-	cvTrackerIndex = 0
 	trackers = []
 
 	bigFrameCols = 0
@@ -85,16 +77,14 @@ class SwiftCounter:
 
 	cachedTimeStamps = []
 
-	showPredictionLines = True
 
-
-	def __init__(self, videoPath, renderFunc, displayCountFunc, startCondition, backgroundSubtractor=1):
+	def __init__(self, videoPath, renderFunc, displayCountFunc, startCondition):
 		self.videoPath = videoPath
 		self.renderFunc = renderFunc
 		self.startCondition = startCondition
 		self.displayCountFunc = displayCountFunc
-		self.setBackgroundSubtractor(backgroundSubtractor)
-
+		self.setBackgroundSubtractor()
+		self.currentTracker = settings[Settings.TRACKER]
 		self.videoCapture = cv.VideoCapture(videoPath)
 
 		ret, self.currentBigFrame = self.videoCapture.read()
@@ -104,7 +94,6 @@ class SwiftCounter:
 			quit() # Probably change this to display an error message
 
 		# always render the big frame first
-		self.renderFunc(self.currentBigFrame)
 		self.bigFrameRows = len(self.currentBigFrame)
 		self.bigFrameCols = len(self.currentBigFrame[0])
 
@@ -121,16 +110,24 @@ class SwiftCounter:
 	def getBigFrameDims(self):
 		return (self.bigFrameCols, self.bigFrameRows)
 
-	def setBackgroundSubtractor(self, index):
-		if index == 0:
+	def setBackgroundSubtractor(self):
+		bgSub = settings[Settings.BACKGROUND_SUBTRACTOR]
+		if bgSub == 'MOG':
 			self.backgroundSubtractor = cv.createBackgroundSubtractorMOG()
-		elif index == 1:
+		elif bgSub == 'MOG2':
 			self.backgroundSubtractor = cv.createBackgroundSubtractorMOG2()
 
 	def createCVTracker(self):
-		if self.cvTrackerIndex == 0:
+		# Check if tracker setting has changed
+		if self.currentTracker != settings[Settings.TRACKER]:
+			print('KILLING TRACKERS')
+			self.currentTracker = settings[Settings.TRACKER]
+			# Kill all trackers
+			self.trackers = []
+
+		if self.currentTracker == 'MOSSE':
 			return cv.TrackerMOSSE_create()
-		elif self.cvTrackerIndex == 1:
+		elif self.currentTracker == 'CSRT':
 			return cv.TrackerCSRT_create()
 
 		#cvTracker = cv.TrackerBoosting_create()
@@ -144,19 +141,11 @@ class SwiftCounter:
 		self.mainBBox = mainBBox
 		self.smallFrameCols = mainBBox[2]
 		self.smallFrameRows = mainBBox[3]
-		sh.drawBoundingBox(self.currentBigFrame, self.mainBBox)
-		# always render the big frame here
-		self.renderFunc(self.currentBigFrame)
 
 	def setChimneyPoints(self, chimneyPoints):
 		# translate the line to the position in the small frame (main bounding box)
 		self.chimneyPoints.append((chimneyPoints[0][0] - self.mainBBox[0], chimneyPoints[0][1] - self.mainBBox[1]))
 		self.chimneyPoints.append((chimneyPoints[1][0] - self.mainBBox[0], chimneyPoints[1][1] - self.mainBBox[1]))
-		self.drawChimneyLine()
-
-		# always render the big frame here
-		self.renderFunc(self.currentBigFrame)
-		
 
 	def drawChimneyLine(self):
 		cv.line(self.currentSmallFrame, self.chimneyPoints[0], self.chimneyPoints[1], (250, 0, 1), 2)
@@ -233,8 +222,8 @@ class SwiftCounter:
 
 			# perform a series of erosions and dilations to remove
 			# any small blobs of noise from the thresholded image
-			maskFrame = cv.erode(maskFrame, None, iterations=self.erodeIterations)
-			maskFrame = cv.dilate(maskFrame, None, iterations=self.dilateIterations)
+			maskFrame = cv.erode(maskFrame, None, iterations=settings[Settings.ERODE_ITERATIONS])
+			maskFrame = cv.dilate(maskFrame, None, iterations=settings[Settings.DILATE_ITERATIONS])
 
 			# find contours and draw then on the main frame
 			contoursFrame, contours, hierarchy = cv.findContours(maskFrame, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
@@ -243,7 +232,7 @@ class SwiftCounter:
 			self.updateTrackers(maskFrame, contours)
 			self.findNewContours(maskFrame, contours)
 
-			if self.showFrames:
+			if settings[Settings.SHOW_VIDEO]:
 				# draw bounding box and chimney line
 				sh.drawBoundingBox(self.currentBigFrame, self.mainBBox)
 				self.drawChimneyLine()
@@ -287,18 +276,18 @@ class SwiftCounter:
 				# guard against false positivies to preserve cpu resources
 				# remove trackers with empty bounding boxes
 				# is not necessary for most trackers (but useful for MIL)
-				if self.removeEmptyTrackers and not tracker.containsContour(contours, self.dropContourOutsideSizeRange, self.minContourArea, self.maxContourArea):
+				if settings[Settings.REMOVE_EMPTY_TRACKERS] and not tracker.containsContour(contours, self.dropContourOutsideSizeRange, self.minContourArea, self.maxContourArea):
 						self.trackers.remove(tracker)
 						continue
 
-				if self.showFrames:
+				if settings[Settings.SHOW_VIDEO]:
 					if settings[Settings.SHOW_BOUNDING_BOXES]:
 						#tracker.drawBbox(maskFrame, (255,0,0))
 						tracker.drawShrunkBbox(maskFrame, (255,0,0))
 						#tracker.drawBbox(self.currentSmallFrame, (255,0,0))
 						tracker.drawShrunkBbox(self.currentSmallFrame, (255,0,0))
 
-					if self.showPredictionLines:
+					if settings[Settings.SHOW_PREDICTION_LINES]:
 						# draw the line to the predicted point
 						point = tracker.getPoint()
 						ppoint = tracker.predictNextPoint()
@@ -367,7 +356,7 @@ class SwiftCounter:
 				customTracker = ct.Tracker(maskFrame, cvTracker, centerPoint, (x,y,w,h))
 				self.trackers.append(customTracker)
 
-				if self.showFrames and settings[Settings.SHOW_BOUNDING_BOXES]:
+				if settings[Settings.SHOW_VIDEO] and settings[Settings.SHOW_BOUNDING_BOXES]:
 					customTracker.drawShrunkBbox(maskFrame, (0,0,255))
 					customTracker.drawShrunkBbox(self.currentSmallFrame, (0,0,255))
 
@@ -382,11 +371,15 @@ if __name__ == '__main__':
 	def cvRender(frame):
 		cv.imshow('Main Frame', frame)
 
-	file_path = '/Users/SamTaylor/Courses/seng499/testfiles/unofficial/birds_busy1.mp4'
+	def displayCount(count):
+		print("Count:", count)
+
+	#file_path = '/Users/SamTaylor/Courses/seng499/testfiles/unofficial/birds_busy1.mp4'
+	file_path = '/Users/SamTaylor/Courses/seng499/testfiles/birds_052117_204459.mp4'
 	mainBBox = (440, 178, 827, 556)
 	chimneyPoints = ((755, 693), (869, 687))
 
-	swiftCounter = SwiftCounter(file_path, cvRender)
+	swiftCounter = SwiftCounter(file_path, cvRender, displayCount, None)
 	swiftCounter.setMainROI(mainBBox)
 	swiftCounter.setChimneyPoints(chimneyPoints)
 	swiftCounter.start()
