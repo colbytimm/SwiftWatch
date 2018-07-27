@@ -82,7 +82,7 @@ class Thread(QThread):
         global chimneyPoints
 
         self.state = State.RUNNING
-        self.swiftCounter = sc.SwiftCounter(file_path, self.renderFrame, startCondition)
+        self.swiftCounter = sc.SwiftCounter(file_path, self.renderFrame, self.displayCount, startCondition)
 
         cvFrameDims = self.swiftCounter.getBigFrameDims()
         guiFrameRect = self.mainWindow.getCorrectRatioRect()
@@ -115,6 +115,9 @@ class Thread(QThread):
         convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
         #p = convertToQtFormat.scaled(826, 461, Qt.KeepAspectRatio)
         return convertToQtFormat
+
+    def displayCount(self, count):
+        self.mainWindow.lcdNumber.display(count)
 
     def renderFrame(self, frame):
         #self.changePixmap.emit(self.toQtFormat(frame))
@@ -249,7 +252,7 @@ class Gui(QMainWindow):
         self.settings_btn.clicked.connect(self.settings_clicked)
         self.export_btn.clicked.connect(self.export_clicked)
 
-        self.lcdNumber.display(random.randint(1,18))
+        self.lcdNumber.display(0)
 
         self.begin = QtCore.QPoint()
         self.end = QtCore.QPoint()

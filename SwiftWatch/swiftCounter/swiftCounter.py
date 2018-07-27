@@ -62,10 +62,11 @@ class SwiftCounter:
 	cachedTimeStamps = []
 
 
-	def __init__(self, videoPath, renderFunc, startCondition, backgroundSubtractor=1):
+	def __init__(self, videoPath, renderFunc, displayCountFunc, startCondition, backgroundSubtractor=1):
 		self.videoPath = videoPath
 		self.renderFunc = renderFunc
 		self.startCondition = startCondition
+		self.displayCountFunc = displayCountFunc
 		self.setBackgroundSubtractor(backgroundSubtractor)
 
 		self.videoCapture = cv.VideoCapture(videoPath)
@@ -214,10 +215,6 @@ class SwiftCounter:
 			self.findNewContours(maskFrame, contours)
 
 			if self.showFrames:
-				# display counts
-				cv.putText(self.currentSmallFrame, "In: {}".format(str(self.enteredChimneyCount)), (10, 70),
-					cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-				
 				# draw bounding box and chimney line
 				sh.drawBoundingBox(self.currentBigFrame, self.mainBBox)
 				self.drawChimneyLine()
@@ -281,9 +278,10 @@ class SwiftCounter:
 
 
 				if tracker.enteredChimney(self.chimneyPoints):
-					self.enteredChimneyCount +=1
+					self.enteredChimneyCount += 1
 					self.enteredChimneyCountFromPrediction += 1
 					print('ENTERED CHIMNEY, count:', self.enteredChimneyCount)
+					self.displayCountFunc(self.enteredChimneyCount)
 
 				# if tracker.exitedChimney(chimneyPoints):
 				# 	exitedChimneyCount +=1
