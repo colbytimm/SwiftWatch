@@ -93,14 +93,14 @@ class Thread(QThread):
         return QPixmap.fromImage(self.toQtFormat(frame))
 
 
-class about(QMainWindow):
+class About(QMainWindow):
     def __init__(self, parent=None):
-        super(about, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
+        super(About, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
         loadUi("about_box.ui", self).setFixedSize(606, 340)
 
-class settings(QMainWindow):
+class Settings(QMainWindow):
     def __init__(self, parent=None):
-        super(settings, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
+        super(Settings, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
         loadUi("settings.ui", self).setFixedSize(350, 550)
 
         self.tracker_combo.currentIndexChanged.connect(self.tracker_selection)
@@ -172,20 +172,38 @@ class settings(QMainWindow):
         self.prediction_checkbox.setChecked(False)
         self.erode_value.setText("0")
 
-class gui(QMainWindow):
-    app_name = "SwiftWatch"
+class Export(QDialog):
+    def __init__(self, parent=None):
+        super(Export, self).__init__()
+        loadUi("CSV_exporter.ui", self).setFixedSize(395, 161)
+
+        self.export_btn.clicked.connect(self.export_clicked)
+        self.dont_export_btn.clicked.connect(self.dont_export_clicked)
+        self.cancel_btn.clicked.connect(self.cancel_clicked)
+
+    def export_clicked(self):
+        print("Export")
+
+    def dont_export_clicked(self):
+        print("Don't export")
+
+    def cancel_clicked(self):
+        print("Cancel")
+
+class Gui(QMainWindow):
     trackerThread = None
 
     def __init__(self):
-        super(gui, self).__init__()
+        super(Gui, self).__init__()
         #loadUi("mainwindow.ui", self).setFixedSize(807, 450)
         loadUi("mainwindow.ui", self)#.setFixedSize(1050, 589)
         # dockWidget = self.findChild("dockWidget_2")
         # print(dockWidget)
         self.changePixmap = pyqtSignal(QImage)
 
-        self.about_dialog = about(self)
-        self.setting_dialog = settings(self)
+        self.about_dialog = About(self)
+        self.setting_dialog = Settings(self)
+        self.export_dialog = Export(self)
 
         self.load_btn.clicked.connect(self.load_clicked)
         self.play_btn.clicked.connect(self.play_clicked)
@@ -193,6 +211,7 @@ class gui(QMainWindow):
         self.stop_btn.clicked.connect(self.stop_clicked)
         self.draw_btn.clicked.connect(self.draw_clicked)
         self.settings_btn.clicked.connect(self.settings_clicked)
+        self.export_btn.clicked.connect(self.export_clicked)
 
         self.lcdNumber.display(random.randint(1,18))
 
@@ -223,6 +242,13 @@ class gui(QMainWindow):
 
     def update_current_frame_pixmap(self, framePixmap):
         self.currentFramePixmap = framePixmap
+
+    def export_clicked(self):
+        try:
+            self.export_dialog.setWindowTitle('Export to CSV')
+            self.export_dialog.show()
+        except:
+            print("No export dialog found")
 
     def play_clicked(self):
         self.trackerThread.play()
@@ -375,7 +401,7 @@ class gui(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    main_window = gui()
+    main_window = Gui()
     main_window.setWindowTitle('SwiftWatch')
     main_window.show()
 
