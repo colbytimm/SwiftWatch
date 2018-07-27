@@ -1,5 +1,3 @@
-
-
 import sys
 import cv2
 #import imutils
@@ -34,6 +32,11 @@ class State(Enum):
 
 class Thread(QThread):
     changePixmap = pyqtSignal(QImage)
+
+    def __init__(self, mainWindow):
+        super(Thread, self).__init__()
+        self.mainWindow = mainWindow
+        print(self.mainWindow)
 
     def get_path(self, video_path):
         global path
@@ -72,11 +75,16 @@ class Thread(QThread):
     def toQtFormat(self, frame):
         rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
-        p = convertToQtFormat.scaled(826, 461, Qt.KeepAspectRatio)
-        return p
+        #p = convertToQtFormat.scaled(826, 461, Qt.KeepAspectRatio)
+        return convertToQtFormat
 
     def renderFrame(self, frame):
-        self.changePixmap.emit(self.toQtFormat(frame))
+        #self.changePixmap.emit(self.toQtFormat(frame))
+        # super().firstFramePixmap = frame
+        # super().setFrame()
+        self.mainWindow.update_current_frame_pixmap(self.getPixmap(frame))
+        self.mainWindow.update()
+
 
     def getPixmap(self, frame):
         return QPixmap.fromImage(self.toQtFormat(frame))
@@ -207,6 +215,9 @@ class gui(QMainWindow):
         except:
             print("Can't play from import")
 
+    def update_current_frame_pixmap(self, framePixmap):
+        self.firstFramePixmap = framePixmap
+
     def play_clicked(self):
         if not self.trackerThread:
             return
@@ -258,18 +269,19 @@ class gui(QMainWindow):
             print("No settings box found")
 
     def paintEvent(self, event):
+        qp = QPainter(self)
         if self.state == State.DRAW_ROI:
-            qp = QPainter(self)
             qp.drawPixmap(self.rect(), self.firstFramePixmap)
             br = QBrush(QColor(0, 255, 0, 30))
             qp.setBrush(br)
             qp.drawRect(QtCore.QRect(self.begin, self.end))
         elif self.state == State.DRAW_CHIMNEY:
-            qp = QPainter(self)
             qp.drawPixmap(self.rect(), self.firstFramePixmap)
             pen = QPen(Qt.red, 3)
             qp.setPen(pen)
             qp.drawLine(QtCore.QLine(self.begin, self.end))
+        elif self.state == State.RUNNING:
+            qp.drawPixmap(self.rect(), self.firstFramePixmap)
 
     def mousePressEvent(self, event):
         self.end = event.pos()
