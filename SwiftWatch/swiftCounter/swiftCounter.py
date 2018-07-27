@@ -139,6 +139,9 @@ class SwiftCounter:
 	def stop(self):
 		self._stop = True
 
+	def play(self):
+		self._stop = False
+
 	def start(self):
 		self.countSwifts()
 
@@ -220,7 +223,6 @@ class SwiftCounter:
 				self.renderMainFrame()
 
 			if self._stop:
-				self._stop = False
 				with self.startCondition:
 					self.startCondition.wait()
 
