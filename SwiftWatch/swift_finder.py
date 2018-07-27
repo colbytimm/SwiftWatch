@@ -12,6 +12,7 @@ from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
 from PyQt5 import QtCore
 import swiftCounter.swiftCounter as sc
+import random
 
 width = 800
 height = 450
@@ -177,7 +178,7 @@ class gui(QMainWindow):
     def __init__(self):
         super(gui, self).__init__()
         #loadUi("mainwindow.ui", self).setFixedSize(807, 450)
-        loadUi("mainwindow_presentation copy.ui", self)#.setFixedSize(1050, 589)
+        loadUi("mainwindow.ui", self)#.setFixedSize(1050, 589)
         # dockWidget = self.findChild("dockWidget_2")
         # print(dockWidget)
         self.changePixmap = pyqtSignal(QImage)
@@ -191,6 +192,8 @@ class gui(QMainWindow):
         self.stop_btn.clicked.connect(self.stop_clicked)
         self.draw_btn.clicked.connect(self.draw_clicked)
         self.settings_btn.clicked.connect(self.settings_clicked)
+
+        self.lcdNumber.display(random.randint(1,18))
 
         self.begin = QtCore.QPoint()
         self.end = QtCore.QPoint()
