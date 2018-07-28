@@ -241,6 +241,8 @@ class Gui(QMainWindow):
         self.draw_btn.clicked.connect(self.draw_contour)
         self.zoom_btn.clicked.connect(self.toggle_zoom_main_ROI)
 
+        self.finished_btn.setVisible(False)
+
         self.lcdNumber.display(0)
 
         self.begin = QtCore.QPoint()
