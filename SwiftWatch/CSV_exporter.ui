@@ -27,10 +27,22 @@
      <family>Arial</family>
     </font>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Export&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
    <property name="styleSheet">
     <string notr="true">QPushButton#Export {
     background-color: blue;
 	border-color: beige;
+}
+
+QToolTip {
+	background-color: rgb(0, 0, 0);
+    border-radius: 6px;
+	color : white;
+	padding: 2px;
+    opacity: 200;
+	font: 75 13pt &quot;Arial&quot;;
 }</string>
    </property>
    <property name="text">
@@ -40,7 +52,7 @@
   <widget class="QPushButton" name="cancel_btn">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>190</x>
      <y>130</y>
      <width>101</width>
      <height>32</height>
@@ -50,6 +62,19 @@
     <font>
      <family>Arial</family>
     </font>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cancel&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QToolTip {
+	background-color: rgb(0, 0, 0);
+    border-radius: 6px;
+	color : white;
+	padding: 2px;
+    opacity: 200;
+	font: 75 13pt &quot;Arial&quot;;
+}</string>
    </property>
    <property name="text">
     <string>Cancel</string>
@@ -119,36 +144,11 @@
     <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="dont_export_btn">
-   <property name="geometry">
-    <rect>
-     <x>190</x>
-     <y>130</y>
-     <width>101</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Arial</family>
-    </font>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QPushButton#Export {
-    background-color: blue;
-	border-color: beige;
-}</string>
-   </property>
-   <property name="text">
-    <string>Don't Export</string>
-   </property>
-  </widget>
   <zorder>label</zorder>
   <zorder>label_2</zorder>
   <zorder>label_3</zorder>
   <zorder>cancel_btn</zorder>
   <zorder>export_btn</zorder>
-  <zorder>dont_export_btn</zorder>
  </widget>
  <resources/>
  <connections/>

@@ -112,7 +112,7 @@
    </property>
    <property name="styleSheet">
     <string notr="true">QLabel#logo {
-	image: url(:/images/swiftfinder_logo.svg) 2 2 2 2 stretch stretch;
+	image: url(:/images/swiftwatch_logo.svg) 2 2 2 2 stretch stretch;
 }</string>
    </property>
    <property name="text">

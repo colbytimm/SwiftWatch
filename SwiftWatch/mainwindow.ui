@@ -151,7 +151,7 @@ QToolTip {
         <property name="font">
          <font>
           <family>Arial</family>
-          <pointsize>20</pointsize>
+          <pointsize>26</pointsize>
           <weight>75</weight>
           <italic>false</italic>
           <bold>true</bold>
@@ -160,7 +160,7 @@ QToolTip {
         <property name="styleSheet">
          <string notr="true">QLabel#display_text {
 	color: white;
-	font: bold 20pt &quot;Arial&quot;;
+	font: bold 26pt &quot;Arial&quot;;
 }</string>
         </property>
         <property name="text">
@@ -299,8 +299,8 @@ QLCDNumber {
        <widget class="QPushButton" name="finished_btn">
         <property name="minimumSize">
          <size>
-          <width>45</width>
-          <height>45</height>
+          <width>60</width>
+          <height>60</height>
          </size>
         </property>
         <property name="styleSheet">
