@@ -265,7 +265,8 @@ class Gui(QMainWindow):
         #self.draw_btn.clicked.connect(self.draw_clicked)
         self.settings_btn.clicked.connect(self.settings_clicked)
         self.export_btn.clicked.connect(self.export_clicked)
-        self.draw_btn.clicked.connect(self.toggle_zoom_main_ROI)
+        self.draw_btn.clicked.connect(self.draw_contour)
+        self.zoom_btn.clicked.connect(self.toggle_zoom_main_ROI)
 
         self.lcdNumber.display(0)
 
@@ -342,6 +343,9 @@ class Gui(QMainWindow):
             self.about_dialog.show()
         except:
             print("No about box found")
+
+    def draw_contour(self):
+        print("Draw contour")
 
     def settings_clicked(self):
         try:
