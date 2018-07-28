@@ -204,9 +204,14 @@ QToolTip {
        <widget class="QLCDNumber" name="lcdNumber">
         <property name="minimumSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>50</width>
+          <height>50</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>30</pointsize>
+         </font>
         </property>
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Swift Count&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
