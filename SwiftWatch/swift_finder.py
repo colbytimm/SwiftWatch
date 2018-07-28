@@ -273,11 +273,15 @@ class MainWindow(QMainWindow):
         self.zoom_btn.clicked.connect(self.toggle_zoom_main_ROI)
         self.finished_btn.clicked.connect(self.finished_clicked)
 
+        self.lcdNumber.display(0)
+
         self.finished_btn.setVisible(False)
         self.play_btn.setVisible(False)
         self.stop_btn.setVisible(False)
-
-        self.lcdNumber.display(0)
+        self.lcdNumber.setVisible(False)
+        self.export_btn.setVisible(False)
+        self.zoom_btn.setVisible(False)
+        self.draw_btn.setVisible(False)
 
         self.begin = QtCore.QPoint()
         self.end = QtCore.QPoint()
@@ -341,6 +345,10 @@ class MainWindow(QMainWindow):
 
             self.play_btn.setVisible(True)
             self.stop_btn.setVisible(True)
+            self.lcdNumber.setVisible(True)
+            self.export_btn.setVisible(True)
+            self.zoom_btn.setVisible(True)
+            self.draw_btn.setVisible(True)
 
             # update the state and start tracking
             self.state = State.RUNNING
@@ -482,6 +490,11 @@ class MainWindow(QMainWindow):
                 self.finished_btn.setVisible(False)
                 self.play_btn.setVisible(True)
                 self.stop_btn.setVisible(True)
+                self.lcdNumber.setVisible(True)
+                self.export_btn.setVisible(True)
+                self.zoom_btn.setVisible(True)
+                self.draw_btn.setVisible(True)
+
                 # set the chimney points
                 chimneyPoints = ((self.begin.x(), self.begin.y()), (self.end.x(), self.end.y()))
 
