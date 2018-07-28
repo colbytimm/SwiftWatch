@@ -17,5 +17,7 @@
         <file>images/edit_btn_hover.svg</file>
         <file>images/export_btn.svg</file>
         <file>images/export_btn_hover.svg</file>
+        <file>images/zoom_btn.svg</file>
+        <file>images/zoom_btn_hover.svg</file>
     </qresource>
 </RCC>
