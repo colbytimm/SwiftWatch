@@ -76,7 +76,9 @@ class SwiftCounter:
 	startCondition = None
 
 	cachedTimeStamps = {}
-
+	frameCount = 0
+	prevFrameCount = 0
+	fps = 0
 
 	def __init__(self, videoPath, renderFunc, displayCountFunc, startCondition):
 		self.videoPath = videoPath
@@ -185,10 +187,9 @@ class SwiftCounter:
 		videoStringLen = len(videoString) - 1
 		videoName = videoString[videoStringLen].split("_")[1].split('.')[0]
 
-		print(datetime)
 		datetime_object = datetime.strptime(videoName, '%Y%m%d%H%M%S')
-		current_time_object = int(datetime.fromtimestamp(int(current_frame / fps)).strftime('%H%M%S'))
-		datetime_object += timedelta(seconds=current_time_object)
+		current_time = int(current_frame / fps)
+		datetime_object += timedelta(seconds=current_time)
 
 		return datetime_object.time()
 
@@ -202,8 +203,8 @@ class SwiftCounter:
 		videoName = self.getVideoName(self.videoPath)
 		dataForCSV = [["Filename","Time","Swift Entering"]]
 
-		for num in range(len(self.cachedTimeStamps)):
-			dataForCSV.append([videoName,self.cachedTimeStamps[num],"1"])
+		for key, value in self.cachedTimeStamps.items():
+			dataForCSV.append([videoName, key, value])
 
 		myFile = open(filePath, 'w')
 		with myFile:
@@ -211,8 +212,7 @@ class SwiftCounter:
 			writer.writerows(dataForCSV)
 
 	def countSwifts(self):
-		frameCount = 0
-		fps = self.videoCapture.get(cv.CAP_PROP_FPS)
+		self.fps = self.videoCapture.get(cv.CAP_PROP_FPS)
 
 		while True:
 			ret, self.currentBigFrame = self.videoCapture.read()
@@ -253,8 +253,7 @@ class SwiftCounter:
 				with self.startCondition:
 					self.startCondition.wait()
 
-			frameCount += 1
-			self.cacheTimeStamp(frameCount, fps)
+			self.frameCount += 1
 
 			#check if video is finished
 			k = cv.waitKey(1) & 0xff
@@ -308,6 +307,7 @@ class SwiftCounter:
 
 
 				if tracker.enteredChimney(self.chimneyPoints):
+					self.cacheTimeStamp(self.frameCount, self.fps)
 					self.enteredChimneyCount += 1
 					self.enteredChimneyCountFromPrediction += 1
 					print('ENTERED CHIMNEY, count:', self.enteredChimneyCount)
