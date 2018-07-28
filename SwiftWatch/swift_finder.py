@@ -152,6 +152,17 @@ class Settings(QMainWindow):
         self.empty_tracker_checkbox.toggled.connect(self.empty_tracker_checkbox_selection)
         self.reset_defaults_btn.clicked.connect(self.reset_defaults_clicked)
 
+        # Set setting defaults
+        self.tracker_combo.setCurrentIndex(sc.settings[sc.Settings.TRACKER])
+        self.bckgrnd_sub_combo.setCurrentIndex(sc.settings[sc.Settings.BACKGROUND_SUBTRACTOR])
+        self.erode_value.setValue(sc.settings[sc.Settings.ERODE_ITERATIONS])
+        self.dilate_value.setValue(sc.settings[sc.Settings.DILATE_ITERATIONS])
+        self.video_checkbox.setChecked(sc.settings[sc.Settings.SHOW_VIDEO])
+        self.prediction_checkbox.setChecked(sc.settings[sc.Settings.SHOW_PREDICTION_LINES])
+        self.bounding_checkbox.setChecked(sc.settings[sc.Settings.SHOW_BOUNDING_BOXES])
+        self.empty_tracker_checkbox.setChecked(sc.settings[sc.Settings.REMOVE_EMPTY_TRACKERS])
+
+
     def tracker_selection(self):
         # set tracker here
         sc.settings[sc.Settings.TRACKER] = self.tracker_combo.currentText()

@@ -22,8 +22,8 @@ class Settings(Enum):
 
 # Default Settings
 settings = {
-    Settings.TRACKER: 'MOSSE',
-    Settings.BACKGROUND_SUBTRACTOR: 'MOG2',
+    Settings.TRACKER: 0,
+    Settings.BACKGROUND_SUBTRACTOR: 1,
     Settings.ERODE_ITERATIONS: 1,
     Settings.DILATE_ITERATIONS: 1,
     Settings.SHOW_CONTOURS: False, # NOT IMPLEMENTED
@@ -112,9 +112,9 @@ class SwiftCounter:
 
 	def setBackgroundSubtractor(self):
 		bgSub = settings[Settings.BACKGROUND_SUBTRACTOR]
-		if bgSub == 'MOG':
+		if bgSub == 0:
 			self.backgroundSubtractor = cv.createBackgroundSubtractorMOG()
-		elif bgSub == 'MOG2':
+		elif bgSub == 1:
 			self.backgroundSubtractor = cv.createBackgroundSubtractorMOG2()
 
 	def createCVTracker(self):
@@ -125,9 +125,9 @@ class SwiftCounter:
 			# Kill all trackers
 			self.trackers = []
 
-		if self.currentTracker == 'MOSSE':
+		if self.currentTracker == 0:
 			return cv.TrackerMOSSE_create()
-		elif self.currentTracker == 'CSRT':
+		elif self.currentTracker == 1:
 			return cv.TrackerCSRT_create()
 
 		#cvTracker = cv.TrackerBoosting_create()
