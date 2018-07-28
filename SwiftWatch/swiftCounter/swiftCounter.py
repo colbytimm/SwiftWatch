@@ -26,7 +26,7 @@ settings = {
     Settings.BACKGROUND_SUBTRACTOR: 1,
     Settings.ERODE_ITERATIONS: 1,
     Settings.DILATE_ITERATIONS: 1,
-    Settings.SHOW_CONTOURS: False, # NOT IMPLEMENTED
+    Settings.SHOW_CONTOURS: False,
     Settings.SHOW_VIDEO: True,
     Settings.SHOW_PREDICTION_LINES: True,
     Settings.SHOW_BOUNDING_BOXES: True,
@@ -101,11 +101,14 @@ class SwiftCounter:
 		settings[setting] = value
 
 	# Convert to correct format and render in gui
-	def renderMainFrame(self):
+	def renderFrames(self):
 		if self.renderSmallFrame:
 			self.renderFunc(self.currentSmallFrame)
 		else:
 			self.renderFunc(self.currentBigFrame)
+
+		if settings[Settings.SHOW_CONTOURS]:
+			self.renderCountoursFuc(self.currentContourFrame)
 
 	def getBigFrameDims(self):
 		return (self.bigFrameCols, self.bigFrameRows)
@@ -233,6 +236,8 @@ class SwiftCounter:
 			maskFrame = cv.erode(maskFrame, None, iterations=settings[Settings.ERODE_ITERATIONS])
 			maskFrame = cv.dilate(maskFrame, None, iterations=settings[Settings.DILATE_ITERATIONS])
 
+			self.currentContourFrame = maskFrame
+
 			# find contours and draw then on the main frame
 			contoursFrame, contours, hierarchy = cv.findContours(maskFrame, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 			#cv.drawContours(self.currentSmallFrame, contours, -1,  (0, 255, 0), 1);
@@ -246,7 +251,7 @@ class SwiftCounter:
 				self.drawChimneyLine()
 
 				# render the main frame in the gui
-				self.renderMainFrame()
+				self.renderFrames()
 
 			if self._stop:
 				with self.startCondition:

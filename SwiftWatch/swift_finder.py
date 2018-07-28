@@ -81,7 +81,7 @@ class Thread(QThread):
         global chimneyPoints
 
         self.state = State.RUNNING
-        self.swiftCounter = sc.SwiftCounter(file_path, self.renderFrame, self.displayCount, startCondition)
+        self.swiftCounter = sc.SwiftCounter(file_path, self.renderFrames, self.displayCount, startCondition)
 
         cvFrameDims = self.swiftCounter.getBigFrameDims()
         guiFrameRect = self.mainWindow.getCorrectRatioRect()
@@ -117,18 +117,18 @@ class Thread(QThread):
     def toQtFormat(self, frame):
         rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
-        #p = convertToQtFormat.scaled(826, 461, Qt.KeepAspectRatio)
         return convertToQtFormat
 
     def displayCount(self, count):
         self.mainWindow.lcdNumber.display(count)
 
-    def renderFrame(self, frame):
-        #self.changePixmap.emit(self.toQtFormat(frame))
-        # super().currentFramePixmap = frame
-        # super().setFrame()
-        self.mainWindow.update_current_frame_pixmap(self.getPixmap(frame))
+    def renderFrames(self, mainFrame, contourFrame = None):
+        self.mainWindow.update_current_frame_pixmap(self.getPixmap(mainFrame))
         self.mainWindow.update()
+
+        if contourFrame is not None:
+            self.mainWindow.contour_window.update_current_frame_pixmap(self.getPixmap(frame))
+            self.mainWindow.contour_window.update()
 
     def getPixmap(self, frame):
         return QPixmap.fromImage(self.toQtFormat(frame))
@@ -221,14 +221,22 @@ class Contour(QMainWindow):
     def __init__(self):
         super(Contour, self).__init__()
         loadUi("contourwindow.ui", self)
+        self.setWindowTitle('Contour View SwiftWatch')
+
+    def update_current_frame_pixmap(self, framePixmap):
+        self.currentFramePixmap = framePixmap
+
+        def paintEvent(self, event):
+            print("Painting")
+            qp = QPainter(self)
+            qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
 
 class Gui(QMainWindow):
     trackerThread = None
 
     def __init__(self):
         super(Gui, self).__init__()
-        #loadUi("mainwindow.ui", self).setFixedSize(807, 450)
-        loadUi("mainwindow.ui", self)#.setFixedSize(1050, 589)
+        loadUi("mainwindow.ui", self)
 
         self.changePixmap = pyqtSignal(QImage)
 
@@ -241,10 +249,9 @@ class Gui(QMainWindow):
         self.play_btn.clicked.connect(self.play_clicked)
         self.about_btn.clicked.connect(self.about_clicked)
         self.stop_btn.clicked.connect(self.stop_clicked)
-        #self.draw_btn.clicked.connect(self.draw_clicked)
         self.settings_btn.clicked.connect(self.settings_clicked)
         self.export_btn.clicked.connect(self.export_clicked)
-        self.draw_btn.clicked.connect(self.draw_contour)
+        self.draw_btn.clicked.connect(self.toggle_contour_window)
         self.zoom_btn.clicked.connect(self.toggle_zoom_main_ROI)
         self.finished_btn.clicked.connect(self.finished_clicked)
 
@@ -335,11 +342,6 @@ class Gui(QMainWindow):
     def stop_clicked(self):
         self.trackerThread.stop()
 
-    def draw_clicked(self):
-        # draw enterence to chimney here
-        #self.showFullScreen()
-        print("draw")
-
     def set_image(self, image):
         self.video_label.setPixmap(QPixmap.fromImage(image))
 
@@ -368,11 +370,14 @@ class Gui(QMainWindow):
         except:
             print("No about box found")
 
-    def draw_contour(self):
+    def toggle_contour_window(self):
         try:
             print("contour clicked")
-            self.contour_window.setWindowTitle('Contour View SwiftWatch')
-            self.contour_window.show()
+            sc.settings[sc.Settings.SHOW_CONTOURS] = not sc.settings[sc.Settings.SHOW_CONTOURS]
+            if sc.settings[sc.Settings.SHOW_CONTOURS]:
+                self.contour_window.show()
+            else:
+                self.contour_window.hide()
         except:
             print("No contour window found")
 
