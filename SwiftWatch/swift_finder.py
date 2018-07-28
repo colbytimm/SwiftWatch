@@ -22,6 +22,8 @@ chimneyPoints = ()
 
 startCondition = threading.Condition()
 
+defaultSettings = sc.settings.copy()
+
 # Translate point from the GUI Frame position to the original CV Frame position
 def translatePointToCVFrame(guiFramePoint, guiFrameRect, cvFrameDims):
     xRatio = cvFrameDims[0] / guiFrameRect.width()
@@ -140,6 +142,7 @@ class Settings(QMainWindow):
     def __init__(self, parent=None):
         super(Settings, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
         loadUi("settings.ui", self).setFixedSize(350, 550)
+        self.parent = parent
 
         self.tracker_combo.currentIndexChanged.connect(self.tracker_selection)
         self.bckgrnd_sub_combo.currentIndexChanged.connect(self.bckgrnd_sub_selection)
@@ -150,27 +153,18 @@ class Settings(QMainWindow):
         self.prediction_checkbox.toggled.connect(self.prediction_checkbox_selection)
         self.bounding_checkbox.toggled.connect(self.bounding_checkbox_selection)
         self.empty_tracker_checkbox.toggled.connect(self.empty_tracker_checkbox_selection)
-        self.reset_defaults_btn.clicked.connect(self.reset_defaults_clicked)
+        self.reset_defaults_btn.clicked.connect(self.reset_defaults)
 
-        # Set setting defaults
-        self.tracker_combo.setCurrentIndex(sc.settings[sc.Settings.TRACKER])
-        self.bckgrnd_sub_combo.setCurrentIndex(sc.settings[sc.Settings.BACKGROUND_SUBTRACTOR])
-        self.erode_value.setValue(sc.settings[sc.Settings.ERODE_ITERATIONS])
-        self.dilate_value.setValue(sc.settings[sc.Settings.DILATE_ITERATIONS])
-        self.video_checkbox.setChecked(sc.settings[sc.Settings.SHOW_VIDEO])
-        self.prediction_checkbox.setChecked(sc.settings[sc.Settings.SHOW_PREDICTION_LINES])
-        self.bounding_checkbox.setChecked(sc.settings[sc.Settings.SHOW_BOUNDING_BOXES])
-        self.empty_tracker_checkbox.setChecked(sc.settings[sc.Settings.REMOVE_EMPTY_TRACKERS])
-
+        self.reset_defaults()
 
     def tracker_selection(self):
         # set tracker here
-        sc.settings[sc.Settings.TRACKER] = self.tracker_combo.currentText()
+        sc.settings[sc.Settings.TRACKER] = self.tracker_combo.currentIndex()
         print(self.tracker_combo.currentText())
 
     def bckgrnd_sub_selection(self):
         # set background subtraction here
-        sc.settings[sc.Settings.BACKGROUND_SUBTRACTOR] = self.bckgrnd_sub_combo.currentText()
+        sc.settings[sc.Settings.BACKGROUND_SUBTRACTOR] = self.bckgrnd_sub_combo.currentIndex()
         print(self.bckgrnd_sub_combo.currentText())
 
     def erode_value_selection(self):
@@ -227,12 +221,19 @@ class Settings(QMainWindow):
             sc.settings[sc.Settings.REMOVE_EMPTY_TRACKERS] = False
             print("Using empty tracker")
 
-    def reset_defaults_clicked(self):
-        print("reset defaults")
-
     def reset_defaults(self):
-        self.prediction_checkbox.setChecked(False)
-        self.erode_value.setText("0")
+        print("setting defaults:", defaultSettings)
+        self.tracker_combo.setCurrentIndex(defaultSettings[sc.Settings.TRACKER])
+        self.bckgrnd_sub_combo.setCurrentIndex(defaultSettings[sc.Settings.BACKGROUND_SUBTRACTOR])
+        self.erode_value.setValue(defaultSettings[sc.Settings.ERODE_ITERATIONS])
+        self.dilate_value.setValue(defaultSettings[sc.Settings.DILATE_ITERATIONS])
+        self.video_checkbox.setChecked(defaultSettings[sc.Settings.SHOW_VIDEO])
+        self.prediction_checkbox.setChecked(defaultSettings[sc.Settings.SHOW_PREDICTION_LINES])
+        self.bounding_checkbox.setChecked(defaultSettings[sc.Settings.SHOW_BOUNDING_BOXES])
+        self.empty_tracker_checkbox.setChecked(defaultSettings[sc.Settings.REMOVE_EMPTY_TRACKERS])
+        print(self.parent)
+        self.update()
+        self.parent.update()
 
 class Export(QDialog):
     def __init__(self, parent=None):
@@ -477,6 +478,18 @@ class Gui(QMainWindow):
 
     def toggle_zoom_main_ROI(self):
         self.trackerThread.toggleZoomMainROI()
+
+    # @QtCore.pyqtSlot()
+    # def on_pushButtonSimulate_clicked(self):
+    #     mouseReleaseEvent = QtGui.QMouseEvent(
+    #         QtCore.QEvent.MouseButtonRelease,
+    #         self.cursor().pos(),
+    #         QtCore.Qt.LeftButton,
+    #         QtCore.Qt.LeftButton,
+    #         QtCore.Qt.NoModifier,
+    #     )
+
+    #     QtCore.QCoreApplication.postEvent(self, mouseReleaseEvent)
 
 
 
