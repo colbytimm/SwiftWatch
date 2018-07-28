@@ -157,59 +157,31 @@ class Settings(QMainWindow):
         self.reset_defaults()
 
     def tracker_selection(self):
-        # set tracker here
         sc.settings[sc.Settings.TRACKER] = self.tracker_combo.currentIndex()
-        print(self.tracker_combo.currentText())
 
     def bckgrnd_sub_selection(self):
-        # set background subtraction here
         sc.settings[sc.Settings.BACKGROUND_SUBTRACTOR] = self.bckgrnd_sub_combo.currentIndex()
-        print(self.bckgrnd_sub_combo.currentText())
 
     def erode_value_selection(self):
-        # set erode value here
         sc.settings[sc.Settings.ERODE_ITERATIONS] = self.erode_value.value()
-        print(self.erode_value.value())
 
     def dilate_value_selection(self):
-        # set erode value here
         sc.settings[sc.Settings.DILATE_ITERATIONS] = self.dilate_value.value()
-        print(self.dilate_value.value())
 
     def prediction_checkbox_selection(self):
-        if self.prediction_checkbox.isChecked():
-            sc.settings[sc.Settings.SHOW_PREDICTION_LINES] = True
-            print("Prediction view selected")
-        else:
-            sc.settings[sc.Settings.SHOW_PREDICTION_LINES] = False
-            print("Not using prediction view")
+        sc.settings[sc.Settings.SHOW_PREDICTION_LINES] = self.prediction_checkbox.isChecked()
 
     def video_checkbox_selection(self):
-        # set contour view here
-        if self.video_checkbox.isChecked():
-            sc.settings[sc.Settings.SHOW_VIDEO] = True
-            print("Video view removed selected")
-        else:
-            sc.settings[sc.Settings.SHOW_VIDEO] = False
-            print("Video view shown")
+        sc.settings[sc.Settings.SHOW_VIDEO] = self.video_checkbox.isChecked()
+        if not sc.settings[sc.Settings.SHOW_VIDEO]:
+            # black out the screen
+            self.parent.currentFramePixmap = None
 
     def bounding_checkbox_selection(self):
-        # set contour view here
-        if self.bounding_checkbox.isChecked():
-            sc.settings[sc.Settings.SHOW_BOUNDING_BOXES] = True
-            print("Bounding view selected")
-        else:
-            sc.settings[sc.Settings.SHOW_BOUNDING_BOXES] = False
-            print("Not using bounding view")
+        sc.settings[sc.Settings.SHOW_BOUNDING_BOXES] = self.bounding_checkbox.isChecked()
 
     def empty_tracker_checkbox_selection(self):
-        # set contour view here
-        if self.empty_tracker_checkbox.isChecked():
-            sc.settings[sc.Settings.REMOVE_EMPTY_TRACKERS] = True
-            print("Remove empty tracker selected")
-        else:
-            sc.settings[sc.Settings.REMOVE_EMPTY_TRACKERS] = False
-            print("Using empty tracker")
+        sc.settings[sc.Settings.REMOVE_EMPTY_TRACKERS] = self.empty_tracker_checkbox.isChecked()
 
     def reset_defaults(self):
         print("setting defaults:", defaultSettings)
@@ -416,7 +388,6 @@ class Gui(QMainWindow):
         qp = QPainter(self)
         if self.state == State.DRAW_ROI:
             self.display_text.setText("Select Region of Interest")
-
             # draw the frame
             qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
 
@@ -445,7 +416,13 @@ class Gui(QMainWindow):
 
         elif self.state == State.RUNNING:
             self.display_text.setText("")
-            qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
+            if self.currentFramePixmap is not None:
+                qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
+            else:
+                self.display_text.setText("The video is hidden, but we're still counting!")
+                br = QBrush(QColor(255, 255, 255, 1))
+                qp.setBrush(br)
+                qp.drawRect(self.rect())
 
     def mousePressEvent(self, event):
         self.end = event.pos()
@@ -530,20 +507,6 @@ class Gui(QMainWindow):
 
     def toggle_zoom_main_ROI(self):
         self.trackerThread.toggleZoomMainROI()
-
-    # @QtCore.pyqtSlot()
-    # def on_pushButtonSimulate_clicked(self):
-    #     mouseReleaseEvent = QtGui.QMouseEvent(
-    #         QtCore.QEvent.MouseButtonRelease,
-    #         self.cursor().pos(),
-    #         QtCore.Qt.LeftButton,
-    #         QtCore.Qt.LeftButton,
-    #         QtCore.Qt.NoModifier,
-    #     )
-
-    #     QtCore.QCoreApplication.postEvent(self, mouseReleaseEvent)
-
-
 
 
 
