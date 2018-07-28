@@ -75,7 +75,7 @@ class SwiftCounter:
 	_stop = False
 	startCondition = None
 
-	cachedTimeStamps = []
+	cachedTimeStamps = {}
 
 
 	def __init__(self, videoPath, renderFunc, displayCountFunc, startCondition):
@@ -167,22 +167,29 @@ class SwiftCounter:
 	def start(self):
 		self.countSwifts()
 
-	def cacheTimeStamp(self, current_frame, fps, videoPath):
-		# Caches time stamps for each bird
-		self.time = self.getTimeStamp(current_frame, fps, videoPath)
-		self.cachedTimeStamps.append(self.time)
+	def cacheTimeStamp(self, current_frame, fps):
+        # Caches time stamps for each bird
+        time = self.getTimeStamp(current_frame, fps)
+        videoName = self.getVideoName(self.videoPath)
+        if time in self.cachedTimeStamps:
+            value = self.cachedTimeStamps[time]
+            value += 1
+            self.cachedTimeStamps[time] = value
+        else:
+            self.cachedTimeStamps[time] = 1
 
-	def getTimeStamp(self, current_frame, fps, videoPath):
-		# This function takes the video start time and adds the currenrt seconds that have passed to it
-		self.videoString = videoPath.split("/")
-		self.videoStringLen = len(self.videoString) - 1
-		self.videoName = self.videoString[self.videoStringLen].split("_")[1].split('.mov')[0]
+    def getTimeStamp(self, current_frame, fps):
+        # This function takes the video start time and adds the current seconds that have passed to it
+        videoPath = self.videoPath
+        videoString = videoPath.split("/")
+        videoStringLen = len(videoString) - 1
+        videoName = videoString[videoStringLen].split("_")[1].split('.mov')[0]
 
-		self.datetime_object = datetime.strptime(self.videoName, '%Y%m%d%H%M%S')
-		self.current_time_object = int(datetime.fromtimestamp(int(current_frame / fps)).strftime('%H%M%S'))
-		self.datetime_object += timedelta(seconds=self.current_time_object)
+        datetime_object = datetime.strptime(videoName, '%Y%m%d%H%M%S')
+        current_time_object = int(datetime.fromtimestamp(int(current_frame / fps)).strftime('%H%M%S'))
+        datetime_object += timedelta(seconds=current_time_object)
 
-		return self.datetime_object.time()
+        return datetime_object.time()
 
 	def getVideoName(self, videoPath):
 		videoString = videoPath.split("/")
@@ -190,16 +197,17 @@ class SwiftCounter:
 		videoName = videoString[videoStringLen]
 		return videoName
 
-	def writeToCSV(self, filePath, videoPath):
-		self.videoName = self.getVideoName(videoPath)
-		self.writeToCSV = [["Filename","Time","Swift Entering"]]
-		for num in range(len(self.cachedTimeStamps)):
-			self.writeToCSV.append([self.videoName,self.cachedTimeStamps[num],"1"])
+	def writeToCSV(self, filePath):
+		videoName = self.getVideoName(self.videoPath)
+		dataForCSV = [["Filename","Time","Swift Entering"]]
 
-		self.myFile = open(filePath, 'w')
-		with self.myFile:
-			self.writer = csv.writer(self.myFile)
-			self.writer.writerows(self.myData)
+		for num in range(len(self.cachedTimeStamps)):
+			dataForCSV.append([videoName,self.cachedTimeStamps[num],"1"])
+
+		myFile = open(filePath, 'w')
+		with myFile:
+			writer = csv.writer(myFile)
+			writer.writerows(dataForCSV)
 
 	def countSwifts(self):
 		count = 0
