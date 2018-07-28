@@ -141,7 +141,7 @@ class About(QMainWindow):
 class Settings(QMainWindow):
     def __init__(self, parent=None):
         super(Settings, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
-        loadUi("settings.ui", self).setFixedSize(350, 550)
+        loadUi("settings.ui", self).setFixedSize(350, 509)
         self.parent = parent
 
         self.tracker_combo.currentIndexChanged.connect(self.tracker_selection)
@@ -289,7 +289,6 @@ class MainWindow(QMainWindow):
         self.state = State.LOAD_VIDEO
         self.trackerThread = Thread(self)
         self.trackerThread.changePixmap.connect(self.set_image)
-        
 
     @pyqtSlot()
     def load_clicked(self):
