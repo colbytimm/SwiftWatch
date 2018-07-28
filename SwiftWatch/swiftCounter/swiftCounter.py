@@ -183,8 +183,9 @@ class SwiftCounter:
 		videoPath = self.videoPath
 		videoString = videoPath.split("/")
 		videoStringLen = len(videoString) - 1
-		videoName = videoString[videoStringLen].split("_")[1].split('.mov')[0]
+		videoName = videoString[videoStringLen].split("_")[1].split('.')[0]
 
+		print(datetime)
 		datetime_object = datetime.strptime(videoName, '%Y%m%d%H%M%S')
 		current_time_object = int(datetime.fromtimestamp(int(current_frame / fps)).strftime('%H%M%S'))
 		datetime_object += timedelta(seconds=current_time_object)
@@ -210,7 +211,7 @@ class SwiftCounter:
 			writer.writerows(dataForCSV)
 
 	def countSwifts(self):
-		count = 0
+		frameCount = 0
 		fps = self.videoCapture.get(cv.CAP_PROP_FPS)
 
 		while True:
@@ -252,7 +253,8 @@ class SwiftCounter:
 				with self.startCondition:
 					self.startCondition.wait()
 
-			count += 1
+			frameCount += 1
+			self.cacheTimeStamp(frameCount, fps)
 
 			#check if video is finished
 			k = cv.waitKey(1) & 0xff
