@@ -202,17 +202,13 @@ class Export(QDialog):
         super(Export, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
         loadUi("CSV_exporter.ui", self).setFixedSize(395, 161)
 
+        self.error_export_dialog = ErrorExportDialog(self)
+
         self.export_btn.clicked.connect(self.export_clicked)
-        self.dont_export_btn.clicked.connect(self.dont_export_clicked)
         self.cancel_btn.clicked.connect(self.cancel_clicked)
 
     def export_clicked(self):
-        print("Export")
         self.exportFileNameDialog()
-        self.close()
-
-    def dont_export_clicked(self):
-        print("Don't export")
         self.close()
 
     def cancel_clicked(self):
@@ -223,24 +219,39 @@ class Export(QDialog):
         options = QFileDialog.Options()
         #options |= QFileDialog.DontUseNativeDialog
         file_path, _ = QFileDialog.getSaveFileName(self, "Export CSV", "",
-        ".csv", options=options)
-        # try:
-        if file_path:
-            print(file_path)
-            main_window.trackerThread.swiftCounter.writeToCSV(file_path)
-        # except:
-        #     print("Can't export")
+        "CSV (*.csv)", options=options)
+        try:
+            if file_path:
+                print(file_path)
+                main_window.trackerThread.swiftCounter.writeToCSV(file_path)
+        except:
+            try:
+                self.error_export_dialog.setWindowTitle("Error on Export")
+                self.error_export_dialog.show()
+            except:
+                print("No export dialog found")
+            print("Can't export")
+
+class ErrorExportDialog(QDialog):
+    def __init__(self, parent=None):
+        super(ErrorExportDialog, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
+        loadUi("error_export_dialog.ui", self).setFixedSize(538, 177)
+
+        self.ok_btn.clicked.connect(self.ok_clicked)
+
+    def ok_clicked(self):
+        self.close()
 
 class Contour(QMainWindow):
     def __init__(self):
         super(Contour, self).__init__()
         loadUi("contourwindow.ui", self)
 
-class Gui(QMainWindow):
+class MainWindow(QMainWindow):
     trackerThread = None
 
     def __init__(self):
-        super(Gui, self).__init__()
+        super(MainWindow, self).__init__()
         #loadUi("mainwindow.ui", self).setFixedSize(807, 450)
         loadUi("mainwindow.ui", self)#.setFixedSize(1050, 589)
 
@@ -263,6 +274,8 @@ class Gui(QMainWindow):
         self.finished_btn.clicked.connect(self.finished_clicked)
 
         self.finished_btn.setVisible(False)
+        self.play_btn.setVisible(False)
+        self.stop_btn.setVisible(False)
 
         self.lcdNumber.display(0)
 
@@ -325,6 +338,9 @@ class Gui(QMainWindow):
         elif self.state == State.DRAW_CHIMNEY:
             # set the chimney points
             chimneyPoints = ((self.begin.x(), self.begin.y()), (self.end.x(), self.end.y()))
+
+            self.play_btn.setVisible(True)
+            self.stop_btn.setVisible(True)
 
             # update the state and start tracking
             self.state = State.RUNNING
@@ -464,6 +480,8 @@ class Gui(QMainWindow):
         elif self.state == State.DRAW_CHIMNEY:
             if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
                 self.finished_btn.setVisible(False)
+                self.play_btn.setVisible(True)
+                self.stop_btn.setVisible(True)
                 # set the chimney points
                 chimneyPoints = ((self.begin.x(), self.begin.y()), (self.end.x(), self.end.y()))
 
@@ -516,7 +534,7 @@ class Gui(QMainWindow):
 if __name__ == "__main__":
     global main_window
     app = QApplication(sys.argv)
-    main_window = Gui()
+    main_window = MainWindow()
     main_window.setWindowTitle('SwiftWatch')
     main_window.show()
 
