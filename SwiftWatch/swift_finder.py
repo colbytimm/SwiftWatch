@@ -193,7 +193,6 @@ class Settings(QMainWindow):
         self.prediction_checkbox.setChecked(defaultSettings[sc.Settings.SHOW_PREDICTION_LINES])
         self.bounding_checkbox.setChecked(defaultSettings[sc.Settings.SHOW_BOUNDING_BOXES])
         self.empty_tracker_checkbox.setChecked(defaultSettings[sc.Settings.REMOVE_EMPTY_TRACKERS])
-        print(self.parent)
         self.update()
         self.parent.update()
 
@@ -387,7 +386,7 @@ class MainWindow(QMainWindow):
 
     def about_clicked(self):
         try:
-            self.about_dialog.setWindowTitle('About SwiftWatch')
+            self.about_dialog.setWindowTitle('About')
             self.about_dialog.show()
         except:
             print("No about box found")
@@ -395,7 +394,7 @@ class MainWindow(QMainWindow):
     def draw_contour(self):
         try:
             print("contour clicked")
-            self.contour_window.setWindowTitle('Contour View SwiftWatch')
+            self.contour_window.setWindowTitle('Contour View')
             self.contour_window.show()
         except:
             print("No contour window found")
@@ -403,7 +402,7 @@ class MainWindow(QMainWindow):
     def settings_clicked(self):
         try:
             print("settings clicked")
-            self.setting_dialog.setWindowTitle('Settings SwiftWatch')
+            self.setting_dialog.setWindowTitle('Settings')
             self.setting_dialog.show()
         except:
             print("No settings window found")
