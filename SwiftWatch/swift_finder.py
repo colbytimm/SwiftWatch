@@ -245,6 +245,11 @@ class Export(QDialog):
     def cancel_clicked(self):
         self.close()
 
+class Contour(QMainWindow):
+    def __init__(self):
+        super(Contour, self).__init__()
+        loadUi("contourwindow.ui", self)
+
 class Gui(QMainWindow):
     trackerThread = None
 
@@ -258,6 +263,7 @@ class Gui(QMainWindow):
         self.about_dialog = About(self)
         self.setting_dialog = Settings(self)
         self.export_dialog = Export(self)
+        self.contour_window = Contour()
 
         self.load_btn.clicked.connect(self.load_clicked)
         self.play_btn.clicked.connect(self.play_clicked)
@@ -268,6 +274,7 @@ class Gui(QMainWindow):
         self.export_btn.clicked.connect(self.export_clicked)
         self.draw_btn.clicked.connect(self.draw_contour)
         self.zoom_btn.clicked.connect(self.toggle_zoom_main_ROI)
+        self.finished_btn.clicked.connect(self.finished_clicked)
 
         self.finished_btn.setVisible(False)
 
@@ -289,7 +296,7 @@ class Gui(QMainWindow):
         global file_path
         options = QFileDialog.Options()
         #options |= QFileDialog.DontUseNativeDialog
-        file_path, _ = QFileDialog.getOpenFileName(self, "Import Video File", "",
+        file_path, _ = QFileDialog.getSaveFileName(self, "Import Video File", "",
         "Video Files (*.mp4 *.mov *avi);;All Files (*)", options=options)
         try:
             if file_path:
@@ -297,6 +304,19 @@ class Gui(QMainWindow):
                 self.initUI(file_path)
         except:
             print("Can't play from import")
+
+    def exportFileNameDialog(self):
+        global file_path
+        options = QFileDialog.Options()
+        #options |= QFileDialog.DontUseNativeDialog
+        file_path, _ = QFileDialog.getOpenFileName(self, "Export CSV", "",
+        ".csv", options=options)
+        try:
+            if file_path:
+                print(file_path)
+                #self.initUI(file_path)
+        except:
+            print("Can't export")
 
     def update_current_frame_pixmap(self, framePixmap):
         self.currentFramePixmap = framePixmap
@@ -307,6 +327,35 @@ class Gui(QMainWindow):
             self.export_dialog.show()
         except:
             print("No export dialog found")
+
+    def finished_clicked(self):
+        global mainROI
+        global chimneyPoints
+        global startCondition
+
+        self.finished_btn.setVisible(False)
+
+        if self.state == State.DRAW_ROI:
+            # set the main ROI
+            x = self.begin.x()
+            y = self.begin.y()
+            w = self.end.x() - x
+            h = self.end.y() - y
+
+            mainROI = (x, y, w, h)
+
+            print(self.begin, self.end)
+
+            # update the state
+            self.state = State.DRAW_CHIMNEY
+
+        elif self.state == State.DRAW_CHIMNEY:
+            # set the chimney points
+            chimneyPoints = ((self.begin.x(), self.begin.y()), (self.end.x(), self.end.y()))
+
+            # update the state and start tracking
+            self.state = State.RUNNING
+            self.trackerThread.start()
 
     def play_clicked(self):
         self.trackerThread.play()
@@ -348,7 +397,12 @@ class Gui(QMainWindow):
             print("No about box found")
 
     def draw_contour(self):
-        print("Draw contour")
+        try:
+            print("contour clicked")
+            self.contour_window.setWindowTitle('Contour View SwiftWatch')
+            self.contour_window.show()
+        except:
+            print("No contour window found")
 
     def settings_clicked(self):
         try:
@@ -356,7 +410,7 @@ class Gui(QMainWindow):
             self.setting_dialog.setWindowTitle('Settings SwiftWatch')
             self.setting_dialog.show()
         except:
-            print("No settings box found")
+            print("No settings window found")
 
     def paintEvent(self, event):
         qp = QPainter(self)
@@ -404,6 +458,8 @@ class Gui(QMainWindow):
 
     def mouseReleaseEvent(self, event):
         self.end = event.pos()
+        if self.state == State.DRAW_ROI or self.state == State.DRAW_CHIMNEY:
+            self.finished_btn.setVisible(True)
 
     def keyPressEvent(self, event):
         global mainROI

@@ -15,15 +15,15 @@
     <SUITE FILE_PATH="coverage/comp_vis$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1528848067508" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/gui$painter_test.coverage" NAME="painter_test Coverage Results" MODIFIED="1532497707403" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/swiftCounter" />
     <SUITE FILE_PATH="coverage/gui$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1532575971792" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/SwiftWatch$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1532741364635" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SwiftWatch$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1532742522647" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="swift_finder.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/swift_finder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="353">
-              <caret line="271" column="42" lean-forward="false" selection-start-line="271" selection-start-column="42" selection-end-line="271" selection-end-column="42" />
+            <state relative-caret-position="223">
+              <caret line="255" column="23" lean-forward="true" selection-start-line="255" selection-start-column="23" selection-end-line="255" selection-end-column="23" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -52,7 +52,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>QtCore</find>
       <find>Thread</find>
       <find>resource</find>
       <find>play</find>
@@ -80,6 +79,9 @@
       <find>cancel</find>
       <find>fps</find>
       <find>trackers</find>
+      <find>finished_btn</find>
+      <find>draw_contour</find>
+      <find>setting_dialog</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -530,8 +532,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/swift_finder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="353">
-          <caret line="271" column="42" lean-forward="false" selection-start-line="271" selection-start-column="42" selection-end-line="271" selection-end-column="42" />
+        <state relative-caret-position="223">
+          <caret line="255" column="23" lean-forward="true" selection-start-line="255" selection-start-column="23" selection-end-line="255" selection-end-column="23" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
