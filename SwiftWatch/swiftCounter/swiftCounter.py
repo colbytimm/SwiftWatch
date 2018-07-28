@@ -168,28 +168,28 @@ class SwiftCounter:
 		self.countSwifts()
 
 	def cacheTimeStamp(self, current_frame, fps):
-        # Caches time stamps for each bird
-        time = self.getTimeStamp(current_frame, fps)
-        videoName = self.getVideoName(self.videoPath)
-        if time in self.cachedTimeStamps:
-            value = self.cachedTimeStamps[time]
-            value += 1
-            self.cachedTimeStamps[time] = value
-        else:
-            self.cachedTimeStamps[time] = 1
+		# Caches time stamps for each bird
+		time = self.getTimeStamp(current_frame, fps)
+		videoName = self.getVideoName(self.videoPath)
+		if time in self.cachedTimeStamps:
+			value = self.cachedTimeStamps[time]
+			value += 1
+			self.cachedTimeStamps[time] = value
+		else:
+			self.cachedTimeStamps[time] = 1
 
-    def getTimeStamp(self, current_frame, fps):
-        # This function takes the video start time and adds the current seconds that have passed to it
-        videoPath = self.videoPath
-        videoString = videoPath.split("/")
-        videoStringLen = len(videoString) - 1
-        videoName = videoString[videoStringLen].split("_")[1].split('.mov')[0]
+	def getTimeStamp(self, current_frame, fps):
+		# This function takes the video start time and adds the current seconds that have passed to it
+		videoPath = self.videoPath
+		videoString = videoPath.split("/")
+		videoStringLen = len(videoString) - 1
+		videoName = videoString[videoStringLen].split("_")[1].split('.mov')[0]
 
-        datetime_object = datetime.strptime(videoName, '%Y%m%d%H%M%S')
-        current_time_object = int(datetime.fromtimestamp(int(current_frame / fps)).strftime('%H%M%S'))
-        datetime_object += timedelta(seconds=current_time_object)
+		datetime_object = datetime.strptime(videoName, '%Y%m%d%H%M%S')
+		current_time_object = int(datetime.fromtimestamp(int(current_frame / fps)).strftime('%H%M%S'))
+		datetime_object += timedelta(seconds=current_time_object)
 
-        return datetime_object.time()
+		return datetime_object.time()
 
 	def getVideoName(self, videoPath):
 		videoString = videoPath.split("/")
