@@ -31,66 +31,15 @@
       <property name="sizeHint" stdset="0">
        <size>
         <width>20</width>
-        <height>60</height>
+        <height>20</height>
        </size>
       </property>
      </spacer>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="top_layout">
+     <layout class="QHBoxLayout" name="settings_to">
       <item>
        <spacer name="horizontalSpacer_12">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>55</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_11">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QLabel" name="display_text">
-        <property name="font">
-         <font>
-          <family>Arial</family>
-          <pointsize>20</pointsize>
-          <weight>75</weight>
-          <italic>false</italic>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QLabel#display_text {
-	color: white;
-	font: bold 20pt &quot;Arial&quot;;
-}</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_10">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -167,6 +116,74 @@ QToolTip {
      </layout>
     </item>
     <item>
+     <spacer name="verticalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="top_layout">
+      <item>
+       <spacer name="horizontalSpacer_11">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="display_text">
+        <property name="font">
+         <font>
+          <family>Arial</family>
+          <pointsize>20</pointsize>
+          <weight>75</weight>
+          <italic>false</italic>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLabel#display_text {
+	color: white;
+	font: bold 20pt &quot;Arial&quot;;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_10">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
      <spacer name="verticalSpacer">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -204,9 +221,14 @@ QToolTip {
        <widget class="QLCDNumber" name="lcdNumber">
         <property name="minimumSize">
          <size>
-          <width>40</width>
-          <height>40</height>
+          <width>50</width>
+          <height>50</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>30</pointsize>
+         </font>
         </property>
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Swift Count&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -411,17 +433,23 @@ QToolTip {
        <layout class="QHBoxLayout" name="zoom">
         <item>
          <widget class="QPushButton" name="zoom_btn">
+          <property name="minimumSize">
+           <size>
+            <width>35</width>
+            <height>35</height>
+           </size>
+          </property>
           <property name="styleSheet">
            <string notr="true">QPushButton {
 	background-color: rgb(0, 0, 0, 0);
 	border-radius: 25px;
 	border: 10px rgb(0, 0, 0, 0);
-	image: url(:/images/edit_btn.svg) 2 2 2 2 stretch stretch;
+	image: url(:/images/zoom_btn.svg) 2 2 2 2 stretch stretch;
 	background-repeat: no-repeat;
 }
 
 QPushButton:hover {
-    image: url(:/images/edit_btn_hover.svg) 2 2 2 2 stretch stretch;
+    image: url(:/images/zoom_btn_hover.svg) 2 2 2 2 stretch stretch;
 }
 
 QPushButton:pressed {
@@ -574,6 +602,22 @@ QToolTip {
         <property name="sizeHint" stdset="0">
          <size>
           <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_14">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>45</width>
           <height>20</height>
          </size>
         </property>

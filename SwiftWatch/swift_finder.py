@@ -145,7 +145,6 @@ class Settings(QMainWindow):
         self.bckgrnd_sub_combo.currentIndexChanged.connect(self.bckgrnd_sub_selection)
         self.erode_value.valueChanged.connect(self.erode_value_selection)
         self.dilate_value.valueChanged.connect(self.dilate_value_selection)
-        self.contour_checkbox.toggled.connect(self.contour_checkbox_selection)
         self.video_checkbox.toggled.connect(self.video_checkbox_selection)
         self.prediction_checkbox.toggled.connect(self.prediction_checkbox_selection)
         self.bounding_checkbox.toggled.connect(self.bounding_checkbox_selection)
@@ -182,15 +181,6 @@ class Settings(QMainWindow):
         # set erode value here
         sc.settings[sc.Settings.DILATE_ITERATIONS] = self.dilate_value.value()
         print(self.dilate_value.value())
-
-    def contour_checkbox_selection(self):
-        # set contour view here
-        if self.contour_checkbox.isChecked():
-            sc.settings[sc.Settings.SHOW_CONTOURS] = True
-            print("Contour view selected")
-        else:
-            sc.settings[sc.Settings.SHOW_CONTOURS] = False
-            print("Not using contour view")
 
     def prediction_checkbox_selection(self):
         if self.prediction_checkbox.isChecked():

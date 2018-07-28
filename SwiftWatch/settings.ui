@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>350</width>
-    <height>550</height>
+    <height>509</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -148,26 +148,6 @@
     <string>Erode Iteration Value</string>
    </property>
   </widget>
-  <widget class="QLabel" name="contour">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>260</y>
-     <width>171</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">QLabel#contour {
-	color: white;
-	font: 15pt &quot;Comic Sans MS&quot;;
-	qproperty-alignment: AlignRight;
-}</string>
-   </property>
-   <property name="text">
-    <string>Show Contour View</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="dilate">
    <property name="geometry">
     <rect>
@@ -202,7 +182,7 @@
    <property name="geometry">
     <rect>
      <x>110</x>
-     <y>510</y>
+     <y>460</y>
      <width>131</width>
      <height>32</height>
     </rect>
@@ -215,7 +195,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>310</y>
+     <y>260</y>
      <width>171</width>
      <height>31</height>
     </rect>
@@ -235,7 +215,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>360</y>
+     <y>310</y>
      <width>171</width>
      <height>31</height>
     </rect>
@@ -255,7 +235,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>410</y>
+     <y>360</y>
      <width>171</width>
      <height>31</height>
     </rect>
@@ -271,7 +251,7 @@
     <string>Show Bounding Boxes</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="contour_checkbox">
+  <widget class="QCheckBox" name="video_checkbox">
    <property name="geometry">
     <rect>
      <x>210</x>
@@ -284,7 +264,7 @@
     <string>Enable</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="video_checkbox">
+  <widget class="QCheckBox" name="prediction_checkbox">
    <property name="geometry">
     <rect>
      <x>210</x>
@@ -297,7 +277,7 @@
     <string>Enable</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="prediction_checkbox">
+  <widget class="QCheckBox" name="bounding_checkbox">
    <property name="geometry">
     <rect>
      <x>210</x>
@@ -310,24 +290,11 @@
     <string>Enable</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="bounding_checkbox">
-   <property name="geometry">
-    <rect>
-     <x>210</x>
-     <y>410</y>
-     <width>87</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Enable</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="empty_trackers">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>460</y>
+     <y>410</y>
      <width>181</width>
      <height>31</height>
     </rect>
@@ -347,7 +314,7 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>460</y>
+     <y>410</y>
      <width>87</width>
      <height>20</height>
     </rect>
