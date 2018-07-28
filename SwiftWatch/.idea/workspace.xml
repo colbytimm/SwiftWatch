@@ -15,15 +15,15 @@
     <SUITE FILE_PATH="coverage/comp_vis$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1528848067508" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/gui$painter_test.coverage" NAME="painter_test Coverage Results" MODIFIED="1532497707403" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/swiftCounter" />
     <SUITE FILE_PATH="coverage/gui$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1532575971792" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/SwiftWatch$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1532742522647" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SwiftWatch$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1532744163812" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="swift_finder.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="swift_finder.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/swift_finder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="223">
-              <caret line="255" column="23" lean-forward="true" selection-start-line="255" selection-start-column="23" selection-end-line="255" selection-end-column="23" />
+            <state relative-caret-position="247">
+              <caret line="465" column="51" lean-forward="false" selection-start-line="465" selection-start-column="51" selection-end-line="465" selection-end-column="51" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -31,11 +31,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="swiftCounter.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="swiftCounter.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/swiftCounter/swiftCounter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1755">
-              <caret line="228" column="47" lean-forward="true" selection-start-line="228" selection-start-column="47" selection-end-line="228" selection-end-column="47" />
+            <state relative-caret-position="312">
+              <caret line="205" column="66" lean-forward="false" selection-start-line="205" selection-start-column="63" selection-end-line="205" selection-end-column="66" />
               <folding />
             </state>
           </provider>
@@ -52,7 +52,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Thread</find>
       <find>resource</find>
       <find>play</find>
       <find>init</find>
@@ -82,6 +81,7 @@
       <find>finished_btn</find>
       <find>draw_contour</find>
       <find>setting_dialog</find>
+      <find>Can't export</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -309,7 +309,9 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="4" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
@@ -522,21 +524,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/swiftCounter/painter_test.py" />
     <entry file="file://$PROJECT_DIR$/swift_finder_test.py" />
-    <entry file="file://$PROJECT_DIR$/swiftCounter/swiftCounter.py">
+    <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/_strptime.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1755">
-          <caret line="228" column="47" lean-forward="true" selection-start-line="228" selection-start-column="47" selection-end-line="228" selection-end-column="47" />
+        <state relative-caret-position="171">
+          <caret line="361" column="0" lean-forward="false" selection-start-line="361" selection-start-column="0" selection-end-line="361" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/swift_finder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="255" column="23" lean-forward="true" selection-start-line="255" selection-start-column="23" selection-end-line="255" selection-end-column="23" />
+        <state relative-caret-position="247">
+          <caret line="465" column="51" lean-forward="false" selection-start-line="465" selection-start-column="51" selection-end-line="465" selection-end-column="51" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/swiftCounter/swiftCounter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="312">
+          <caret line="205" column="66" lean-forward="false" selection-start-line="205" selection-start-column="63" selection-end-line="205" selection-end-column="66" />
+          <folding />
         </state>
       </provider>
     </entry>

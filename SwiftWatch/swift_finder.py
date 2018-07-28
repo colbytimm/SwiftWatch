@@ -208,6 +208,7 @@ class Export(QDialog):
 
     def export_clicked(self):
         print("Export")
+        self.exportFileNameDialog()
         self.close()
 
     def dont_export_clicked(self):
@@ -216,6 +217,19 @@ class Export(QDialog):
 
     def cancel_clicked(self):
         self.close()
+
+    def exportFileNameDialog(self):
+        global file_path
+        options = QFileDialog.Options()
+        #options |= QFileDialog.DontUseNativeDialog
+        file_path, _ = QFileDialog.getSaveFileName(self, "Export CSV", "",
+        ".csv", options=options)
+        # try:
+        if file_path:
+            print(file_path)
+            main_window.trackerThread.swiftCounter.writeToCSV(file_path)
+        # except:
+        #     print("Can't export")
 
 class Contour(QMainWindow):
     def __init__(self):
@@ -275,7 +289,7 @@ class Gui(QMainWindow):
         global file_path
         options = QFileDialog.Options()
         #options |= QFileDialog.DontUseNativeDialog
-        file_path, _ = QFileDialog.getSaveFileName(self, "Import Video File", "",
+        file_path, _ = QFileDialog.getOpenFileName(self, "Import Video File", "",
         "Video Files (*.mp4 *.mov *avi);;All Files (*)", options=options)
         try:
             if file_path:
@@ -283,19 +297,6 @@ class Gui(QMainWindow):
                 self.initUI(file_path)
         except:
             print("Can't play from import")
-
-    def exportFileNameDialog(self):
-        global file_path
-        options = QFileDialog.Options()
-        #options |= QFileDialog.DontUseNativeDialog
-        file_path, _ = QFileDialog.getOpenFileName(self, "Export CSV", "",
-        ".csv", options=options)
-        try:
-            if file_path:
-                print(file_path)
-                #self.initUI(file_path)
-        except:
-            print("Can't export")
 
     def update_current_frame_pixmap(self, framePixmap):
         self.currentFramePixmap = framePixmap
@@ -451,6 +452,7 @@ class Gui(QMainWindow):
         key = event.key()
         if self.state == State.DRAW_ROI:
             if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
+                self.finished_btn.setVisible(False)
                 # set the main ROI
                 x = self.begin.x()
                 y = self.begin.y()
@@ -466,6 +468,7 @@ class Gui(QMainWindow):
 
         elif self.state == State.DRAW_CHIMNEY:
             if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
+                self.finished_btn.setVisible(False)
                 # set the chimney points
                 chimneyPoints = ((self.begin.x(), self.begin.y()), (self.end.x(), self.end.y()))
 
@@ -516,6 +519,7 @@ class Gui(QMainWindow):
 
 
 if __name__ == "__main__":
+    global main_window
     app = QApplication(sys.argv)
     main_window = Gui()
     main_window.setWindowTitle('SwiftWatch')
