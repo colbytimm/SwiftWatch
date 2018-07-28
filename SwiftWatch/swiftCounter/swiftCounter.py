@@ -103,12 +103,9 @@ class SwiftCounter:
 	# Convert to correct format and render in gui
 	def renderFrames(self):
 		if self.renderSmallFrame:
-			self.renderFunc(self.currentSmallFrame)
+			self.renderFunc(self.currentSmallFrame, self.currentContourFrame)
 		else:
-			self.renderFunc(self.currentBigFrame)
-
-		if settings[Settings.SHOW_CONTOURS]:
-			self.renderCountoursFuc(self.currentContourFrame)
+			self.renderFunc(self.currentBigFrame, self.currentContourFrame)
 
 	def getBigFrameDims(self):
 		return (self.bigFrameCols, self.bigFrameRows)
@@ -237,7 +234,10 @@ class SwiftCounter:
 			maskFrame = cv.erode(maskFrame, None, iterations=settings[Settings.ERODE_ITERATIONS])
 			maskFrame = cv.dilate(maskFrame, None, iterations=settings[Settings.DILATE_ITERATIONS])
 
-			self.currentContourFrame = maskFrame
+			if settings[Settings.SHOW_CONTOURS]:
+				self.currentContourFrame = maskFrame
+			else:
+				self.currentContourFrame = None
 
 			# find contours and draw then on the main frame
 			contoursFrame, contours, hierarchy = cv.findContours(maskFrame, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
@@ -259,7 +259,7 @@ class SwiftCounter:
 					self.startCondition.wait()
 
 			frameCount += 1
-			self.cacheTimeStamp(frameCount, fps)
+			#self.cacheTimeStamp(frameCount, fps)
 
 			#check if video is finished
 			k = cv.waitKey(1) & 0xff

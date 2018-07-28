@@ -11,9 +11,6 @@ from PyQt5.QtGui import *
 from PyQt5 import QtCore
 import swiftCounter.swiftCounter as sc
 
-width = 800
-height = 450
-
 ref_pt = []
 click_count = 0
 
@@ -114,24 +111,24 @@ class Thread(QThread):
             # tacker is initialized
             self.swiftCounter.renderSmallFrame =  not self.swiftCounter.renderSmallFrame
 
-    def toQtFormat(self, frame):
-        rgbImage = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
-        return convertToQtFormat
-
     def displayCount(self, count):
         self.mainWindow.lcdNumber.display(count)
 
     def renderFrames(self, mainFrame, contourFrame = None):
-        self.mainWindow.update_current_frame_pixmap(self.getPixmap(mainFrame))
+        pixmap = self.getPixmap(mainFrame, cv2.COLOR_BGR2RGB)
+        self.mainWindow.update_current_frame_pixmap(pixmap)
         self.mainWindow.update()
 
         if contourFrame is not None:
-            self.mainWindow.contour_window.update_current_frame_pixmap(self.getPixmap(frame))
+            print("Contour is not none")
+            self.mainWindow.contour_window.update_current_frame_pixmap(self.getPixmap(contourFrame, cv2.COLOR_GRAY2RGB))
             self.mainWindow.contour_window.update()
 
-    def getPixmap(self, frame):
-        return QPixmap.fromImage(self.toQtFormat(frame))
+    def getPixmap(self, frame, conversionType):
+        rgbImage = cv2.cvtColor(frame, conversionType)
+        convertToQtFormat = QImage(rgbImage.data, rgbImage.shape[1], rgbImage.shape[0], QImage.Format_RGB888)
+        return QPixmap.fromImage(convertToQtFormat)
+
 
 class About(QMainWindow):
     def __init__(self, parent=None):
@@ -224,26 +221,28 @@ class Export(QDialog):
         #options |= QFileDialog.DontUseNativeDialog
         file_path, _ = QFileDialog.getSaveFileName(self, "Export CSV", "",
         ".csv", options=options)
-        # try:
-        if file_path:
-            print(file_path)
-            main_window.trackerThread.swiftCounter.writeToCSV(file_path)
-        # except:
-        #     print("Can't export")
+        try:
+            if file_path:
+                print(file_path)
+                main_window.trackerThread.swiftCounter.writeToCSV(file_path)
+        except Exception as e:
+            print("Can't export\n", e)
 
 class Contour(QMainWindow):
     def __init__(self):
         super(Contour, self).__init__()
         loadUi("contourwindow.ui", self)
         self.setWindowTitle('Contour View SwiftWatch')
+        self.currentFramePixmap = None
 
     def update_current_frame_pixmap(self, framePixmap):
         self.currentFramePixmap = framePixmap
 
-        def paintEvent(self, event):
-            print("Painting")
+    def paintEvent(self, event):
+        if self.currentFramePixmap is not None:
+            print("Drawing countours")
             qp = QPainter(self)
-            qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
+            qp.drawPixmap(self.rect(), self.currentFramePixmap)
 
 class Gui(QMainWindow):
     trackerThread = None
@@ -288,15 +287,14 @@ class Gui(QMainWindow):
     def openFileNameDialog(self):
         global file_path
         options = QFileDialog.Options()
-        #options |= QFileDialog.DontUseNativeDialog
         file_path, _ = QFileDialog.getOpenFileName(self, "Import Video File", "",
         "Video Files (*.mp4 *.mov *avi);;All Files (*)", options=options)
         try:
             if file_path:
                 print(file_path)
                 self.initUI(file_path)
-        except:
-            print("Can't play from import")
+        except Exception as e:
+            print("Failed in openFileNameDialog\n", e)
 
     def update_current_frame_pixmap(self, framePixmap):
         self.currentFramePixmap = framePixmap
@@ -305,8 +303,8 @@ class Gui(QMainWindow):
         try:
             self.export_dialog.setWindowTitle('Export to CSV')
             self.export_dialog.show()
-        except:
-            print("No export dialog found")
+        except Exception as e:
+            print("No export dialog found\n", e)
 
     def finished_clicked(self):
         global mainROI
@@ -354,7 +352,7 @@ class Gui(QMainWindow):
         if not ret:
             print("Failed to get first frame.")
 
-        self.currentFramePixmap = self.trackerThread.getPixmap(frame)
+        self.currentFramePixmap = self.trackerThread.getPixmap(frame, cv2.COLOR_BGR2RGB)
         self.frameDims = (len(frame[0]), len(frame))
 
         # paint the frame
