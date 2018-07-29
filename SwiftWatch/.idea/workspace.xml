@@ -15,15 +15,15 @@
     <SUITE FILE_PATH="coverage/comp_vis$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1528848067508" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/gui$painter_test.coverage" NAME="painter_test Coverage Results" MODIFIED="1532497707403" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/swiftCounter" />
     <SUITE FILE_PATH="coverage/gui$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1532575971792" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/SwiftWatch$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1532804078168" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SwiftWatch$swift_finder.coverage" NAME="swift_finder Coverage Results" MODIFIED="1532822880793" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="swift_finder.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="swift_finder.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/swift_finder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="389">
-              <caret line="197" column="0" lean-forward="true" selection-start-line="197" selection-start-column="0" selection-end-line="197" selection-end-column="0" />
+            <state relative-caret-position="-4680">
+              <caret line="215" column="35" lean-forward="false" selection-start-line="215" selection-start-column="35" selection-end-line="215" selection-end-column="35" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -31,11 +31,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="swiftCounter.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="swiftCounter.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/swiftCounter/swiftCounter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-569">
-              <caret line="198" column="46" lean-forward="false" selection-start-line="198" selection-start-column="46" selection-end-line="198" selection-end-column="46" />
+            <state relative-caret-position="315">
+              <caret line="393" column="30" lean-forward="true" selection-start-line="393" selection-start-column="30" selection-end-line="393" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -56,7 +56,7 @@
       <file leaf-file-name="customTracker.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/swiftCounter/customTracker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="94">
+            <state relative-caret-position="-765">
               <caret line="101" column="22" lean-forward="false" selection-start-line="101" selection-start-column="8" selection-end-line="101" selection-end-column="22" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
@@ -117,8 +117,8 @@
         <option value="$PROJECT_DIR$/swift_finder copy.py" />
         <option value="$PROJECT_DIR$/swiftCounter/painter_test.py" />
         <option value="$PROJECT_DIR$/swift_finder_test.py" />
-        <option value="$PROJECT_DIR$/swiftCounter/swiftCounter.py" />
         <option value="$PROJECT_DIR$/swift_finder.py" />
+        <option value="$PROJECT_DIR$/swiftCounter/swiftCounter.py" />
       </list>
     </option>
   </component>
@@ -550,9 +550,19 @@
     <entry file="file://$PROJECT_DIR$/swift_finder_test.py" />
     <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/_strptime.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
+        <state relative-caret-position="212">
           <caret line="361" column="0" lean-forward="false" selection-start-line="361" selection-start-column="0" selection-end-line="361" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/swift_finder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4680">
+          <caret line="215" column="35" lean-forward="false" selection-start-line="215" selection-start-column="35" selection-end-line="215" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -568,7 +578,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/swiftCounter/customTracker.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="94">
+        <state relative-caret-position="-765">
           <caret line="101" column="22" lean-forward="false" selection-start-line="101" selection-start-column="8" selection-end-line="101" selection-end-column="22" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
@@ -578,19 +588,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/swiftCounter/swiftCounter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-569">
-          <caret line="198" column="46" lean-forward="false" selection-start-line="198" selection-start-column="46" selection-end-line="198" selection-end-column="46" />
+        <state relative-caret-position="315">
+          <caret line="393" column="30" lean-forward="true" selection-start-line="393" selection-start-column="30" selection-end-line="393" selection-end-column="30" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/swift_finder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="389">
-          <caret line="197" column="0" lean-forward="true" selection-start-line="197" selection-start-column="0" selection-end-line="197" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>

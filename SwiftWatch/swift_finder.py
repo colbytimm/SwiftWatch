@@ -222,7 +222,13 @@ class Export(QDialog):
         try:
             if file_path:
                 print(file_path)
-                main_window.trackerThread.swiftCounter.writeToCSV(file_path)
+                if main_window.trackerThread.swiftCounter.writeToCSV(file_path) == False:
+                    try:
+                        self.error_export_dialog.setWindowTitle("Error on Export")
+                        self.error_export_dialog.show()
+                    except:
+                        print("No export dialog found")
+
         except:
             try:
                 self.error_export_dialog.setWindowTitle("Error on Export")
