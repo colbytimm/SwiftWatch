@@ -79,6 +79,7 @@ class SwiftCounter:
 	frameCount = 0
 	prevFrameCount = 0
 	fps = 0
+	flag = 0
 
 	def __init__(self, videoPath, renderFunc, displayCountFunc, startCondition):
 		self.videoPath = videoPath
@@ -196,16 +197,21 @@ class SwiftCounter:
 			self.cachedTimeStamps[time] = 1
 
 	def getTimeStamp(self, current_frame, fps):
-		# This function takes the video start time and adds the current seconds that have passed to it
-		videoPath = self.videoPath
-		videoString = videoPath.split("/")
-		videoStringLen = len(videoString) - 1
-		videoName = videoString[videoStringLen].split("_")[1].split('.')[0]
-		datetime_object = datetime.strptime(videoName, '%Y%m%d%H%M%S')
-		current_time = int(current_frame / fps)
-		datetime_object += timedelta(seconds=current_time)
+		try:
+			# This function takes the video start time and adds the current seconds that have passed to it
+			videoPath = self.videoPath
+			videoString = videoPath.split("/")
+			videoStringLen = len(videoString) - 1
+			videoName = videoString[videoStringLen].split("_")[1].split('.')[0]
 
-		return datetime_object.time()
+			datetime_object = datetime.strptime(videoName, '%Y%m%d%H%M%S')
+			current_time = int(current_frame / fps)
+			datetime_object += timedelta(seconds=current_time)
+
+			return datetime_object.time()
+		except:
+			self.flag = 1
+			print("invalid file name - getTimeStamp")
 
 	def getVideoName(self, videoPath):
 		videoString = videoPath.split("/")
@@ -214,16 +220,20 @@ class SwiftCounter:
 		return videoName
 
 	def writeToCSV(self, filePath):
-		videoName = self.getVideoName(self.videoPath)
-		dataForCSV = [["Filename","Time","Swift Entering"]]
+		print(self.flag)
+		if self.flag == 0:
+			videoName = self.getVideoName(self.videoPath)
+			dataForCSV = [["Filename","Time","Swift Entering"]]
 
-		for key, value in self.cachedTimeStamps.items():
-			dataForCSV.append([videoName, key, value])
+			for key, value in self.cachedTimeStamps.items():
+				dataForCSV.append([videoName, key, value])
 
-		myFile = open(filePath, 'w')
-		with myFile:
-			writer = csv.writer(myFile)
-			writer.writerows(dataForCSV)
+			myFile = open(filePath, 'w')
+			with myFile:
+				writer = csv.writer(myFile)
+				writer.writerows(dataForCSV)
+		elif self.flag == 1:
+			return False
 
 	def countSwifts(self):
 		self.fps = self.videoCapture.get(cv.CAP_PROP_FPS)
