@@ -167,6 +167,7 @@ class SwiftCounter:
 
 	def drawChimneyLine(self):
 		cv.line(self.currentSmallFrame, self.chimneyPoints[0], self.chimneyPoints[1], (250, 0, 1), 2)
+		cv.line(self.currentContourFrame, self.chimneyPoints[0], self.chimneyPoints[1], (250, 0, 1), 2)
 
 	def updateSmallFrame(self):
 			# get the small frame from the bounding box

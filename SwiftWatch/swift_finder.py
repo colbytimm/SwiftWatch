@@ -54,6 +54,46 @@ def translateROIToCVFrame(guiFrameROI, guiFrameRect, cvFrameDims):
 
     return (int(x), int(y), int(w), int(h))
 
+def getCorrectRatioRect(guiRect=None, getCurrentFrameDims=True):
+    if guiRect is None:
+        guiRect = main_window.rect()
+
+    if getCurrentFrameDims and main_window.trackerThread.swiftCounter is not None:
+        #print("Using current frame dims")
+        frameDims = main_window.trackerThread.swiftCounter.getCurrentFrameDims()
+        #print("frame dims:", frameDims)
+        if frameDims is None:
+            frameDims = main_window.frameDims
+    else:
+        frameDims = main_window.frameDims
+
+    correctRect = QRect()
+
+    guiW = guiRect.width()
+    guiH = guiRect.height()
+    frameW = frameDims[0]
+    frameH = frameDims[1]
+
+    wRatio = frameW / guiW
+    hRatio = frameH / guiH
+
+    if wRatio <= hRatio:
+        # Width is closer than height. Make the frame height the same as the gui 
+        # height then adjust the width to preserve aspect ratio
+        w = frameW / hRatio
+        h = guiH
+        x = (guiW - w) / 2
+        y = 0
+    else:
+        # Height is closer than width. Make the frame width the same as the gui 
+        # width then adjust the height to preserve aspect ratio
+        w = guiW
+        h = frameH / wRatio
+        x = 0
+        y = (guiH - h) / 2
+
+    return QRect(x, y, w, h)
+
 class State(Enum):
     LOAD_VIDEO = 0
     DRAW_ROI = 1
@@ -82,7 +122,7 @@ class Thread(QThread):
         self.swiftCounter = sc.SwiftCounter(file_path, self.renderFrames, self.displayCount, startCondition)
 
         cvFrameDims = self.swiftCounter.getBigFrameDims()
-        guiFrameRect = self.mainWindow.getCorrectRatioRect()
+        guiFrameRect = getCorrectRatioRect()
 
         # Translate the points to the correct coordinates in the CV Frame
         chimneyPointsX = translatePointToCVFrame(chimneyPoints[0], guiFrameRect, cvFrameDims)
@@ -255,9 +295,17 @@ class Contour(QMainWindow):
 
     def paintEvent(self, event):
         if self.currentFramePixmap is not None:
-            print("Drawing countours")
             qp = QPainter(self)
-            qp.drawPixmap(self.rect(), self.currentFramePixmap)
+            qp.drawPixmap(getCorrectRatioRect(self.rect()), self.currentFramePixmap)
+
+    def keyPressEvent(self, event):
+        main_window.keyPressEvent(event)
+
+    def closeEvent(self, event):
+        print("Closing contours window")
+        # stop rendering the contours frame
+        sc.settings[sc.Settings.SHOW_CONTOURS] = False
+        event.accept()
 
 class MainWindow(QMainWindow):
     trackerThread = None
@@ -397,15 +445,11 @@ class MainWindow(QMainWindow):
             print("No about box found")
 
     def toggle_contour_window(self):
-        try:
-            print("contour clicked")
-            sc.settings[sc.Settings.SHOW_CONTOURS] = not sc.settings[sc.Settings.SHOW_CONTOURS]
-            if sc.settings[sc.Settings.SHOW_CONTOURS]:
-                self.contour_window.show()
-            else:
-                self.contour_window.hide()
-        except:
-            print("No contour window found")
+        if sc.settings[sc.Settings.SHOW_CONTOURS]:
+            self.contour_window.close()
+        else:
+            sc.settings[sc.Settings.SHOW_CONTOURS] = True
+            self.contour_window.show()
 
     def settings_clicked(self):
         try:
@@ -420,7 +464,7 @@ class MainWindow(QMainWindow):
         if self.state == State.DRAW_ROI:
             self.display_text.setText("Select Region of Interest")
             # draw the frame
-            qp.drawPixmap(self.getCorrectRatioRect(False), self.currentFramePixmap)
+            qp.drawPixmap(getCorrectRatioRect(getCurrentFrameDims=False), self.currentFramePixmap)
 
             # draw the main ROI
             br = QBrush(QColor(0, 255, 0, 30))
@@ -431,7 +475,7 @@ class MainWindow(QMainWindow):
             self.display_text.setText("Select Entrance of Chimney")
 
             # draw the frame
-            qp.drawPixmap(self.getCorrectRatioRect(False), self.currentFramePixmap)
+            qp.drawPixmap(getCorrectRatioRect(getCurrentFrameDims=False), self.currentFramePixmap)
 
             # draw the main ROI
             roiBegin = QtCore.QPoint(mainROI[0], mainROI[1])
@@ -448,7 +492,7 @@ class MainWindow(QMainWindow):
         elif self.state == State.RUNNING:
             self.display_text.setText("")
             if self.currentFramePixmap is not None:
-                qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
+                qp.drawPixmap(getCorrectRatioRect(), self.currentFramePixmap)
             else:
                 self.display_text.setText("The video is hidden, but we're still counting!")
                 br = QBrush(QColor(255, 255, 255, 1))
@@ -475,9 +519,6 @@ class MainWindow(QMainWindow):
         global startCondition
 
         key = event.key()
-        if self.state == State.RUNNING and key == QtCore.Qt.Key_Return:
-            sc.tX +=1
-            print("tX:",sc.tX)
 
         if self.state == State.DRAW_ROI:
             if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
@@ -517,45 +558,14 @@ class MainWindow(QMainWindow):
             if key == QtCore.Qt.Key_Right:
                 with startCondition:
                     startCondition.notifyAll()
+            elif key == QtCore.Qt.Key_Space:
+                self.trackerThread.play()
+
+        elif self.trackerThread.state == State.RUNNING:
+            if key == QtCore.Qt.Key_Space:
+                self.trackerThread.stop()
+
         event.accept()
-
-    def getCorrectRatioRect(self, getCurrentFrameDims=True):
-        #return self.rect()
-        if getCurrentFrameDims and self.trackerThread.swiftCounter is not None:
-            #print("Using current frame dims")
-            frameDims = self.trackerThread.swiftCounter.getCurrentFrameDims()
-            #print("frame dims:", frameDims)
-            if frameDims is None:
-                frameDims = self.frameDims
-        else:
-            frameDims = self.frameDims
-
-        correctRect = QRect()
-
-        guiW = self.rect().width()
-        guiH = self.rect().height()
-        frameW = frameDims[0]
-        frameH = frameDims[1]
-
-        wRatio = frameW / guiW
-        hRatio = frameH / guiH
-
-        if wRatio <= hRatio:
-            # Width is closer than height. Make the frame height the same as the gui 
-            # height then adjust the width to preserve aspect ratio
-            w = frameW / hRatio
-            h = guiH
-            x = (guiW - w) / 2
-            y = 0
-        else:
-            # Height is closer than width. Make the frame width the same as the gui 
-            # width then adjust the height to preserve aspect ratio
-            w = guiW
-            h = frameH / wRatio
-            x = 0
-            y = (guiH - h) / 2
-
-        return QRect(x, y, w, h)
 
     def toggle_zoom_main_ROI(self):
         self.trackerThread.toggleZoomMainROI()
