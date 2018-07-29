@@ -64,6 +64,7 @@ class State(Enum):
 class Thread(QThread):
     changePixmap = pyqtSignal(QImage)
     state = State.LOAD_VIDEO
+    swiftCounter = None
 
     def __init__(self, mainWindow):
         super(Thread, self).__init__()
@@ -120,7 +121,6 @@ class Thread(QThread):
         self.mainWindow.update()
 
         if contourFrame is not None:
-            print("Contour is not none")
             self.mainWindow.contour_window.update_current_frame_pixmap(self.getPixmap(contourFrame, cv2.COLOR_GRAY2RGB))
             self.mainWindow.contour_window.update()
 
@@ -181,7 +181,6 @@ class Settings(QMainWindow):
         sc.settings[sc.Settings.REMOVE_EMPTY_TRACKERS] = self.empty_tracker_checkbox.isChecked()
 
     def reset_defaults(self):
-        print("setting defaults:", defaultSettings)
         self.tracker_combo.setCurrentIndex(defaultSettings[sc.Settings.TRACKER])
         self.bckgrnd_sub_combo.setCurrentIndex(defaultSettings[sc.Settings.BACKGROUND_SUBTRACTOR])
         self.erode_value.setValue(defaultSettings[sc.Settings.ERODE_ITERATIONS])
@@ -258,7 +257,7 @@ class MainWindow(QMainWindow):
     trackerThread = None
 
     def __init__(self):
-        super(Gui, self).__init__()
+        super(MainWindow, self).__init__()
         loadUi("mainwindow.ui", self)
 
         self.changePixmap = pyqtSignal(QImage)
@@ -415,7 +414,7 @@ class MainWindow(QMainWindow):
         if self.state == State.DRAW_ROI:
             self.display_text.setText("Select Region of Interest")
             # draw the frame
-            qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
+            qp.drawPixmap(self.getCorrectRatioRect(False), self.currentFramePixmap)
 
             # draw the main ROI
             br = QBrush(QColor(0, 255, 0, 30))
@@ -426,7 +425,7 @@ class MainWindow(QMainWindow):
             self.display_text.setText("Select Entrance of Chimney")
 
             # draw the frame
-            qp.drawPixmap(self.getCorrectRatioRect(), self.currentFramePixmap)
+            qp.drawPixmap(self.getCorrectRatioRect(False), self.currentFramePixmap)
 
             # draw the main ROI
             roiBegin = QtCore.QPoint(mainROI[0], mainROI[1])
@@ -470,6 +469,10 @@ class MainWindow(QMainWindow):
         global startCondition
 
         key = event.key()
+        if self.state == State.RUNNING and key == QtCore.Qt.Key_Return:
+            sc.tX +=1
+            print("tX:",sc.tX)
+
         if self.state == State.DRAW_ROI:
             if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
                 self.finished_btn.setVisible(False)
@@ -510,20 +513,28 @@ class MainWindow(QMainWindow):
                     startCondition.notifyAll()
         event.accept()
 
-    def getCorrectRatioRect(self):
+    def getCorrectRatioRect(self, getCurrentFrameDims=True):
+        #return self.rect()
+        if getCurrentFrameDims and self.trackerThread.swiftCounter is not None:
+            #print("Using current frame dims")
+            frameDims = self.trackerThread.swiftCounter.getCurrentFrameDims()
+            #print("frame dims:", frameDims)
+            if frameDims is None:
+                frameDims = self.frameDims
+        else:
+            frameDims = self.frameDims
+
         correctRect = QRect()
 
         guiW = self.rect().width()
         guiH = self.rect().height()
-        frameW = self.frameDims[0]
-        frameH = self.frameDims[1]
+        frameW = frameDims[0]
+        frameH = frameDims[1]
 
         wRatio = frameW / guiW
         hRatio = frameH / guiH
-        wRatioCorrected = abs(wRatio - 1)
-        hRatioCorrected = abs(hRatio - 1)
 
-        if wRatioCorrected <= hRatioCorrected:
+        if wRatio <= hRatio:
             # Width is closer than height. Make the frame height the same as the gui 
             # height then adjust the width to preserve aspect ratio
             w = frameW / hRatio

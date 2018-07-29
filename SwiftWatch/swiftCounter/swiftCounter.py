@@ -109,6 +109,14 @@ class SwiftCounter:
 		else:
 			self.renderFunc(self.currentBigFrame, self.currentContourFrame)
 
+	def getCurrentFrameDims(self):
+		if self.renderSmallFrame:
+			#print("Getting small frames", (self.smallFrameCols, self.smallFrameRows))
+			return (self.smallFrameCols, self.smallFrameRows)
+		else:
+			#print("Getting large frames", (self.bigFrameCols, self.bigFrameRows))
+			return (self.bigFrameCols, self.bigFrameRows)
+
 	def getBigFrameDims(self):
 		return (self.bigFrameCols, self.bigFrameRows)
 
@@ -140,8 +148,15 @@ class SwiftCounter:
 		#cvTracker = cv.TrackerTLD_create()
 
 	def setMainROI(self, mainBBox):
-		self.mainBBox = mainBBox
-		self.smallFrameCols = mainBBox[2]
+		print("MAIN ROI:", mainBBox)
+		#width must be a multiple of 4
+		w = mainBBox[2]
+		wm4 = w % 4
+		if wm4 != 0:
+			w -= wm4
+
+		self.mainBBox = (mainBBox[0], mainBBox[1], w, mainBBox[3])
+		self.smallFrameCols = w
 		self.smallFrameRows = mainBBox[3]
 
 	def setChimneyPoints(self, chimneyPoints):
@@ -186,7 +201,6 @@ class SwiftCounter:
 		videoString = videoPath.split("/")
 		videoStringLen = len(videoString) - 1
 		videoName = videoString[videoStringLen].split("_")[1].split('.')[0]
-
 		datetime_object = datetime.strptime(videoName, '%Y%m%d%H%M%S')
 		current_time = int(current_frame / fps)
 		datetime_object += timedelta(seconds=current_time)
@@ -266,13 +280,6 @@ class SwiftCounter:
 				break
 
 		print("LOOP ENDED")
-
-		# print('Total amount of birds entering:', self.enteredChimneyCount)
-		# print('From prediction:', self.enteredChimneyCountFromPrediction)
-		# print('From lost above chimney:', self.enteredChimneyCountFromLostAboveChimney)
-		# print('Total amount of birds exiting:', self.exitedChimneyCount)
-		# print('Total trackers created:', self.totalTrackersCreated)
-
 
 	def updateTrackers(self, maskFrame, contours):
 			for tracker in self.trackers:
