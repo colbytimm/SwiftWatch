@@ -443,6 +443,7 @@ class MainWindow(QMainWindow):
             self.trackerThread.start()
 
     def restart_clicked(self):
+        self.initUI(file_path)
         print("Restart")
 
     def play_clicked(self):
