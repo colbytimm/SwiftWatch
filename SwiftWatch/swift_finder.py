@@ -528,11 +528,21 @@ class MainWindow(QMainWindow):
         if self.state == State.DRAW_ROI:
             if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
                 self.finished_btn.setVisible(False)
-                # set the main ROI
-                x = self.begin.x()
-                y = self.begin.y()
-                w = self.end.x() - x
-                h = self.end.y() - y
+
+                # fix point ordering
+                if self.begin.x() <= self.end.x():
+                    x = self.begin.x()
+                    w = self.end.x() - x
+                else:
+                    x = self.end.x()
+                    w = self.begin.x() - x
+
+                if self.begin.y() <= self.end.y():
+                    y = self.begin.y()
+                    h = self.end.y() - y
+                else:
+                    y = self.end.y()
+                    h = self.begin.y() - y
 
                 # 5 pixels for a min width and height
                 if w > 5 and h > 5:
@@ -549,8 +559,17 @@ class MainWindow(QMainWindow):
                 self.zoom_btn.setVisible(True)
                 self.draw_btn.setVisible(True)
 
+                # fix point ordering
+                if self.begin.x() <= self.end.x():
+                    begin = self.begin
+                    end = self.end
+                else:
+                    print("swapping chimney points")
+                    begin = self.end
+                    end = self.begin
+
                 # set the chimney points
-                chimneyPoints = ((self.begin.x(), self.begin.y()), (self.end.x(), self.end.y()))
+                chimneyPoints = ((begin.x(), begin.y()), (end.x(), end.y()))
 
                 # update the state and start tracking
                 self.state = State.RUNNING
