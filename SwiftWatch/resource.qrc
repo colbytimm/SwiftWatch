@@ -24,5 +24,7 @@
         <file>images/error.svg</file>
         <file>images/warning.svg</file>
         <file>images/swiftwatch_logo.svg</file>
+        <file>images/restart_btn.svg</file>
+        <file>images/restart_btn_hover.svg</file>
     </qresource>
 </RCC>

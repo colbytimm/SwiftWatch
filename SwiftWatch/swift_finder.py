@@ -340,6 +340,7 @@ class MainWindow(QMainWindow):
         self.draw_btn.clicked.connect(self.toggle_contour_window)
         self.zoom_btn.clicked.connect(self.toggle_zoom_main_ROI)
         self.finished_btn.clicked.connect(self.finished_clicked)
+        self.restart_btn.clicked.connect(self.restart_clicked)
 
         self.lcdNumber.display(0)
 
@@ -350,6 +351,7 @@ class MainWindow(QMainWindow):
         self.export_btn.setVisible(False)
         self.zoom_btn.setVisible(False)
         self.draw_btn.setVisible(False)
+        self.restart_btn.setVisible(False)
 
         self.begin = QtCore.QPoint()
         self.end = QtCore.QPoint()
@@ -434,10 +436,14 @@ class MainWindow(QMainWindow):
             self.export_btn.setVisible(True)
             self.zoom_btn.setVisible(True)
             self.draw_btn.setVisible(True)
+            self.restart_btn.setVisible(True)
 
             # update the state and start tracking
             self.state = State.RUNNING
             self.trackerThread.start()
+
+    def restart_clicked(self):
+        print("Restart")
 
     def play_clicked(self):
         self.trackerThread.play()
@@ -588,6 +594,7 @@ class MainWindow(QMainWindow):
                 self.export_btn.setVisible(True)
                 self.zoom_btn.setVisible(True)
                 self.draw_btn.setVisible(True)
+                self.restart_btn.setVisible(True)
 
                 # fix point ordering
                 if self.begin.x() <= self.end.x():
