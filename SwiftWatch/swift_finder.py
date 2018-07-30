@@ -10,6 +10,7 @@ from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
 from PyQt5 import QtCore
 import swiftCounter.swiftCounter as sc
+from datetime import datetime
 
 ref_pt = []
 click_count = 0
@@ -283,6 +284,16 @@ class ErrorExportDialog(QDialog):
     def ok_clicked(self):
         self.close()
 
+class ErrorNameDialog(QDialog):
+    def __init__(self, parent=None):
+        super(ErrorNameDialog, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
+        loadUi("error_name_dialog.ui", self).setFixedSize(538, 198)
+
+        self.ok_btn.clicked.connect(self.ok_clicked)
+
+    def ok_clicked(self):
+        self.close()
+
 class Contour(QMainWindow):
     def __init__(self):
         super(Contour, self).__init__()
@@ -356,14 +367,33 @@ class MainWindow(QMainWindow):
 
     def openFileNameDialog(self):
         global file_path
+        self.error_name_dialog = ErrorNameDialog(self)
         options = QFileDialog.Options()
         file_path, _ = QFileDialog.getOpenFileName(self, "Import Video File", "",
         "Video Files (*.mp4 *.mov *avi);;All Files (*)", options=options)
         try:
             if file_path:
+                if self.importTest(file_path) == False:
+                    try:
+                        self.error_name_dialog.setWindowTitle("Warning")
+                        self.error_name_dialog.show()
+                    except:
+                        print("No export dialog found")
                 self.initUI(file_path)
         except Exception as e:
-            print("Failed in openFileNameDialog\n", e)
+            print("Failed in openFileNameDialog\n")
+
+    def importTest(self, videoPath):
+        try:
+            videoString = videoPath.split("/")
+            videoStringLen = len(videoString) - 1
+            videoName = videoString[videoStringLen].split("_")[1].split('.')[0]
+
+            datetime_object = datetime.strptime(videoName, '%Y%m%d%H%M%S')
+
+            return True
+        except:
+            return False
 
     def update_current_frame_pixmap(self, framePixmap):
         self.currentFramePixmap = framePixmap
