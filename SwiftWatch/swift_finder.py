@@ -59,9 +59,7 @@ def getCorrectRatioRect(guiRect=None, getCurrentFrameDims=True):
         guiRect = main_window.rect()
 
     if getCurrentFrameDims and main_window.trackerThread.swiftCounter is not None:
-        #print("Using current frame dims")
         frameDims = main_window.trackerThread.swiftCounter.getCurrentFrameDims()
-        #print("frame dims:", frameDims)
         if frameDims is None:
             frameDims = main_window.frameDims
     else:
@@ -138,6 +136,9 @@ class Thread(QThread):
         if self.state == State.RUNNING:
             self.swiftCounter.stop()
             self.state = State.STOPPED
+
+    def forceStop(self):
+        self.swiftCounter.forceStop = True
 
     def play(self):
         global startCondition
@@ -257,7 +258,6 @@ class Export(QDialog):
         "CSV (*.csv)", options=options)
         try:
             if file_path:
-                print(file_path)
                 if main_window.trackerThread.swiftCounter.writeToCSV(file_path) == False:
                     try:
                         self.error_export_dialog.setWindowTitle("Error on Export")
@@ -302,7 +302,6 @@ class Contour(QMainWindow):
         main_window.keyPressEvent(event)
 
     def closeEvent(self, event):
-        print("Closing contours window")
         # stop rendering the contours frame
         sc.settings[sc.Settings.SHOW_CONTOURS] = False
         event.accept()
@@ -350,6 +349,9 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def load_clicked(self):
+        if self.state == State.RUNNING:
+            # DISPLAY WARNING THAT CURRENT VIDEO WILL CLOSE AND RESULTS WILL BE LOST
+            pass
         self.openFileNameDialog()
 
     def openFileNameDialog(self):
@@ -359,7 +361,6 @@ class MainWindow(QMainWindow):
         "Video Files (*.mp4 *.mov *avi);;All Files (*)", options=options)
         try:
             if file_path:
-                print(file_path)
                 self.initUI(file_path)
         except Exception as e:
             print("Failed in openFileNameDialog\n", e)
@@ -390,8 +391,6 @@ class MainWindow(QMainWindow):
 
             mainROI = (x, y, w, h)
 
-            print(self.begin, self.end)
-
             # update the state
             self.state = State.DRAW_CHIMNEY
 
@@ -420,6 +419,12 @@ class MainWindow(QMainWindow):
         self.video_label.setPixmap(QPixmap.fromImage(image))
 
     def initUI(self, file_path):
+        if self.state == State.RUNNING:
+            self.state = State.LOAD_VIDEO
+            self.lcdNumber.display(0)
+            self.trackerThread.forceStop()
+            self.trackerThread = Thread(self)
+
         # Display the first frame
         cap = cv2.VideoCapture(file_path)
         ret, frame = cap.read()
@@ -530,8 +535,6 @@ class MainWindow(QMainWindow):
                 h = self.end.y() - y
                 
                 mainROI = (x,y,w,h)
-
-                print(self.begin, self.end)
 
                 # update the state
                 self.state = State.DRAW_CHIMNEY

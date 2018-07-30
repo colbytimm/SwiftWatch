@@ -72,6 +72,7 @@ class SwiftCounter:
 	smallFrameCols = 0
 	smallFrameRows = 0
 
+	forceStop = False
 	_stop = False
 	startCondition = None
 
@@ -131,7 +132,6 @@ class SwiftCounter:
 	def createCVTracker(self):
 		# Check if tracker setting has changed
 		if self.currentTracker != settings[Settings.TRACKER]:
-			print('KILLING TRACKERS')
 			self.currentTracker = settings[Settings.TRACKER]
 			# Kill all trackers
 			self.trackers = []
@@ -149,7 +149,6 @@ class SwiftCounter:
 		#cvTracker = cv.TrackerTLD_create()
 
 	def setMainROI(self, mainBBox):
-		print("MAIN ROI:", mainBBox)
 		#width must be a multiple of 4
 		w = mainBBox[2]
 		wm4 = w % 4
@@ -161,6 +160,7 @@ class SwiftCounter:
 		self.smallFrameRows = mainBBox[3]
 
 	def setChimneyPoints(self, chimneyPoints):
+		self.chimneyPoints = []
 		# translate the line to the position in the small frame (main bounding box)
 		self.chimneyPoints.append((chimneyPoints[0][0] - self.mainBBox[0], chimneyPoints[0][1] - self.mainBBox[1]))
 		self.chimneyPoints.append((chimneyPoints[1][0] - self.mainBBox[0], chimneyPoints[1][1] - self.mainBBox[1]))
@@ -221,7 +221,6 @@ class SwiftCounter:
 		return videoName
 
 	def writeToCSV(self, filePath):
-		print(self.flag)
 		if self.flag == 0:
 			videoName = self.getVideoName(self.videoPath)
 			dataForCSV = [["Filename","Time","Swift Entering"]]
@@ -239,7 +238,7 @@ class SwiftCounter:
 	def countSwifts(self):
 		self.fps = self.videoCapture.get(cv.CAP_PROP_FPS)
 
-		while True:
+		while not self.forceStop:
 			ret, self.currentBigFrame = self.videoCapture.read()
 
 			if not ret:
@@ -290,8 +289,6 @@ class SwiftCounter:
 			if k == 27 or k == ord('q'):
 				break
 
-		print("LOOP ENDED")
-
 	def updateTrackers(self, maskFrame, contours):
 			for tracker in self.trackers:
 				wasLocated = tracker.update(maskFrame)
@@ -333,7 +330,6 @@ class SwiftCounter:
 					self.cacheTimeStamp(self.frameCount, self.fps)
 					self.enteredChimneyCount += 1
 					self.enteredChimneyCountFromPrediction += 1
-					print('ENTERED CHIMNEY, count:', self.enteredChimneyCount)
 					self.displayCountFunc(self.enteredChimneyCount)
 
 				# if tracker.exitedChimney(chimneyPoints):
