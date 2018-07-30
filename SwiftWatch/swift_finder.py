@@ -533,11 +533,11 @@ class MainWindow(QMainWindow):
                 y = self.begin.y()
                 w = self.end.x() - x
                 h = self.end.y() - y
-                
-                mainROI = (x,y,w,h)
 
-                # update the state
-                self.state = State.DRAW_CHIMNEY
+                # 5 pixels for a min width and height
+                if w > 5 and h > 5:
+                    mainROI = (x,y,w,h)
+                    self.state = State.DRAW_CHIMNEY
 
         elif self.state == State.DRAW_CHIMNEY:
             if key == QtCore.Qt.Key_Enter or key == QtCore.Qt.Key_Return:
