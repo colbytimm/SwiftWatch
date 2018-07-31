@@ -10,6 +10,7 @@ from PyQt5.uic import loadUi
 from PyQt5.QtGui import *
 from PyQt5 import QtCore
 import swiftCounter.swiftCounter as sc
+from datetime import datetime
 
 ref_pt = []
 click_count = 0
@@ -179,7 +180,7 @@ class About(QMainWindow):
 class Settings(QMainWindow):
     def __init__(self, parent=None):
         super(Settings, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
-        loadUi("settings.ui", self).setFixedSize(350, 509)
+        loadUi("settings.ui", self).setFixedSize(350, 606)
         self.parent = parent
 
         self.tracker_combo.currentIndexChanged.connect(self.tracker_selection)
@@ -283,6 +284,16 @@ class ErrorExportDialog(QDialog):
     def ok_clicked(self):
         self.close()
 
+class ErrorNameDialog(QDialog):
+    def __init__(self, parent=None):
+        super(ErrorNameDialog, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
+        loadUi("error_name_dialog.ui", self).setFixedSize(538, 198)
+
+        self.ok_btn.clicked.connect(self.ok_clicked)
+
+    def ok_clicked(self):
+        self.close()
+
 class Contour(QMainWindow):
     def __init__(self):
         super(Contour, self).__init__()
@@ -329,6 +340,7 @@ class MainWindow(QMainWindow):
         self.draw_btn.clicked.connect(self.toggle_contour_window)
         self.zoom_btn.clicked.connect(self.toggle_zoom_main_ROI)
         self.finished_btn.clicked.connect(self.finished_clicked)
+        self.restart_btn.clicked.connect(self.restart_clicked)
 
         self.lcdNumber.display(0)
 
@@ -339,6 +351,7 @@ class MainWindow(QMainWindow):
         self.export_btn.setVisible(False)
         self.zoom_btn.setVisible(False)
         self.draw_btn.setVisible(False)
+        self.restart_btn.setVisible(False)
 
         self.begin = QtCore.QPoint()
         self.end = QtCore.QPoint()
@@ -356,14 +369,33 @@ class MainWindow(QMainWindow):
 
     def openFileNameDialog(self):
         global file_path
+        self.error_name_dialog = ErrorNameDialog(self)
         options = QFileDialog.Options()
         file_path, _ = QFileDialog.getOpenFileName(self, "Import Video File", "",
         "Video Files (*.mp4 *.mov *avi);;All Files (*)", options=options)
         try:
             if file_path:
+                if self.importTest(file_path) == False:
+                    try:
+                        self.error_name_dialog.setWindowTitle("Warning")
+                        self.error_name_dialog.show()
+                    except:
+                        print("No export dialog found")
                 self.initUI(file_path)
         except Exception as e:
-            print("Failed in openFileNameDialog\n", e)
+            print("Failed in openFileNameDialog\n")
+
+    def importTest(self, videoPath):
+        try:
+            videoString = videoPath.split("/")
+            videoStringLen = len(videoString) - 1
+            videoName = videoString[videoStringLen].split("_")[1].split('.')[0]
+
+            datetime_object = datetime.strptime(videoName, '%Y%m%d%H%M%S')
+
+            return True
+        except:
+            return False
 
     def update_current_frame_pixmap(self, framePixmap):
         self.currentFramePixmap = framePixmap
@@ -404,10 +436,15 @@ class MainWindow(QMainWindow):
             self.export_btn.setVisible(True)
             self.zoom_btn.setVisible(True)
             self.draw_btn.setVisible(True)
+            self.restart_btn.setVisible(True)
 
             # update the state and start tracking
             self.state = State.RUNNING
             self.trackerThread.start()
+
+    def restart_clicked(self):
+        self.initUI(file_path)
+        print("Restart")
 
     def play_clicked(self):
         self.trackerThread.play()
@@ -558,6 +595,7 @@ class MainWindow(QMainWindow):
                 self.export_btn.setVisible(True)
                 self.zoom_btn.setVisible(True)
                 self.draw_btn.setVisible(True)
+                self.restart_btn.setVisible(True)
 
                 # fix point ordering
                 if self.begin.x() <= self.end.x():
@@ -591,8 +629,6 @@ class MainWindow(QMainWindow):
     def toggle_zoom_main_ROI(self):
         self.trackerThread.toggleZoomMainROI()
 
-
-
 if __name__ == "__main__":
     global main_window
     app = QApplication(sys.argv)
@@ -601,7 +637,3 @@ if __name__ == "__main__":
     main_window.show()
 
     sys.exit(app.exec_())
-
-
-
-

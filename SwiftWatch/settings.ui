@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>350</width>
-    <height>509</height>
+    <height>606</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -182,7 +182,7 @@
    <property name="geometry">
     <rect>
      <x>110</x>
-     <y>460</y>
+     <y>560</y>
      <width>131</width>
      <height>32</height>
     </rect>
@@ -195,7 +195,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>260</y>
+     <y>360</y>
      <width>171</width>
      <height>31</height>
     </rect>
@@ -215,7 +215,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>310</y>
+     <y>410</y>
      <width>171</width>
      <height>31</height>
     </rect>
@@ -235,7 +235,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>360</y>
+     <y>460</y>
      <width>171</width>
      <height>31</height>
     </rect>
@@ -255,7 +255,7 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>260</y>
+     <y>360</y>
      <width>87</width>
      <height>20</height>
     </rect>
@@ -268,7 +268,7 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>310</y>
+     <y>410</y>
      <width>87</width>
      <height>20</height>
     </rect>
@@ -281,7 +281,7 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>360</y>
+     <y>460</y>
      <width>87</width>
      <height>20</height>
     </rect>
@@ -294,7 +294,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>410</y>
+     <y>510</y>
      <width>181</width>
      <height>31</height>
     </rect>
@@ -314,13 +314,73 @@
    <property name="geometry">
     <rect>
      <x>210</x>
-     <y>410</y>
+     <y>510</y>
      <width>87</width>
      <height>20</height>
     </rect>
    </property>
    <property name="text">
     <string>Enable</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="min_contour_area">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>310</y>
+     <width>41</width>
+     <height>24</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="max_contour_area">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>260</y>
+     <width>41</width>
+     <height>24</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="min_value">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>310</y>
+     <width>171</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel#min_value {
+	color: white;
+	font: 15pt &quot;Comic Sans MS&quot;;
+	qproperty-alignment: AlignRight;
+}</string>
+   </property>
+   <property name="text">
+    <string>Min Contour Area</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="max_value">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>260</y>
+     <width>171</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QLabel#max_value {
+	color: white;
+	font: 15pt &quot;Comic Sans MS&quot;;
+	qproperty-alignment: AlignRight;
+}</string>
+   </property>
+   <property name="text">
+    <string>Max Contour Area</string>
    </property>
   </widget>
  </widget>
