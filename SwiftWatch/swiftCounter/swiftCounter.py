@@ -2,8 +2,6 @@ import numpy as np
 import cv2 as cv
 import swiftCounter.customTracker as ct
 import swiftCounter.swiftHelper as sh
-# import customTracker as ct
-# import swiftHelper as sh
 from datetime import datetime, timedelta
 import csv
 import threading
@@ -19,6 +17,8 @@ class Settings(Enum):
     SHOW_PREDICTION_LINES = 6
     SHOW_BOUNDING_BOXES = 7
     REMOVE_EMPTY_TRACKERS = 8
+    MIN_CONTOUR_AREA = 9
+    MAX_CONTOUR_AREA = 10
 
 # Default Settings
 settings = {
@@ -30,7 +30,9 @@ settings = {
     Settings.SHOW_VIDEO: True,
     Settings.SHOW_PREDICTION_LINES: True,
     Settings.SHOW_BOUNDING_BOXES: True,
-    Settings.REMOVE_EMPTY_TRACKERS: True
+    Settings.REMOVE_EMPTY_TRACKERS: True,
+    Settings.MIN_CONTOUR_AREA: 40,
+    Settings.MAX_CONTOUR_AREA: 160
 }
 
 class SwiftCounter:
@@ -46,9 +48,6 @@ class SwiftCounter:
 	# points relate to position on the small frame (main bounding box)
 	chimneyPoints = []
 
-	# 40 min area seems to work okay
-	minContourArea = 40
-	maxContourArea = 160
 	maxStaleCount = 3
 	dropContourOutsideSizeRange = False
 
@@ -305,7 +304,7 @@ class SwiftCounter:
 				# guard against false positivies to preserve cpu resources
 				# remove trackers with empty bounding boxes
 				# is not necessary for most trackers (but useful for MIL)
-				if settings[Settings.REMOVE_EMPTY_TRACKERS] and not tracker.containsContour(contours, self.dropContourOutsideSizeRange, self.minContourArea, self.maxContourArea):
+				if settings[Settings.REMOVE_EMPTY_TRACKERS] and not tracker.containsContour(contours, self.dropContourOutsideSizeRange, settings[Settings.MIN_CONTOUR_AREA], settings[Settings.MAX_CONTOUR_AREA]):
 						self.trackers.remove(tracker)
 						continue
 
@@ -342,7 +341,7 @@ class SwiftCounter:
 		for contour in contours:
 
 			# gets the contour size, ignoring contours outside the provided area bounds
-			centerPoint = sh.getContourCenter(contour, self.minContourArea, self.maxContourArea)
+			centerPoint = sh.getContourCenter(contour, settings[Settings.MIN_CONTOUR_AREA], settings[Settings.MAX_CONTOUR_AREA])
 
 			if centerPoint is None:
 				continue
