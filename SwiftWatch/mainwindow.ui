@@ -150,7 +150,7 @@ QToolTip {
        <widget class="QLabel" name="display_text">
         <property name="font">
          <font>
-          <family>Comic Sans MS</family>
+          <family>Arial</family>
           <pointsize>26</pointsize>
           <weight>75</weight>
           <italic>false</italic>
@@ -160,7 +160,7 @@ QToolTip {
         <property name="styleSheet">
          <string notr="true">QLabel#display_text {
 	color: white;
-	font: bold 26pt &quot;Comic Sans MS&quot;;
+	font: bold 26pt &quot;Arial&quot;;
 }</string>
         </property>
         <property name="text">
