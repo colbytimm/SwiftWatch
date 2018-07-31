@@ -187,6 +187,9 @@ class Settings(QMainWindow):
         self.bckgrnd_sub_combo.currentIndexChanged.connect(self.bckgrnd_sub_selection)
         self.erode_value.valueChanged.connect(self.erode_value_selection)
         self.dilate_value.valueChanged.connect(self.dilate_value_selection)
+        self.min_contour_area.valueChanged.connect(self.min_contour_area_selection)
+        self.max_contour_area.valueChanged.connect(self.max_contour_area_selection)
+        self.dilate_value.valueChanged.connect(self.dilate_value_selection)
         self.video_checkbox.toggled.connect(self.video_checkbox_selection)
         self.prediction_checkbox.toggled.connect(self.prediction_checkbox_selection)
         self.bounding_checkbox.toggled.connect(self.bounding_checkbox_selection)
@@ -222,17 +225,23 @@ class Settings(QMainWindow):
     def empty_tracker_checkbox_selection(self):
         sc.settings[sc.Settings.REMOVE_EMPTY_TRACKERS] = self.empty_tracker_checkbox.isChecked()
 
+    def min_contour_area_selection(self):
+        sc.settings[sc.Settings.MIN_CONTOUR_AREA] = self.min_contour_area.value()
+
+    def max_contour_area_selection(self):
+        sc.settings[sc.Settings.MAX_CONTOUR_AREA] = self.max_contour_area.value()
+
     def reset_defaults(self):
         self.tracker_combo.setCurrentIndex(defaultSettings[sc.Settings.TRACKER])
         self.bckgrnd_sub_combo.setCurrentIndex(defaultSettings[sc.Settings.BACKGROUND_SUBTRACTOR])
         self.erode_value.setValue(defaultSettings[sc.Settings.ERODE_ITERATIONS])
         self.dilate_value.setValue(defaultSettings[sc.Settings.DILATE_ITERATIONS])
+        self.min_contour_area.setValue(defaultSettings[sc.Settings.MIN_CONTOUR_AREA])
+        self.max_contour_area.setValue(defaultSettings[sc.Settings.MAX_CONTOUR_AREA])
         self.video_checkbox.setChecked(defaultSettings[sc.Settings.SHOW_VIDEO])
         self.prediction_checkbox.setChecked(defaultSettings[sc.Settings.SHOW_PREDICTION_LINES])
         self.bounding_checkbox.setChecked(defaultSettings[sc.Settings.SHOW_BOUNDING_BOXES])
         self.empty_tracker_checkbox.setChecked(defaultSettings[sc.Settings.REMOVE_EMPTY_TRACKERS])
-        self.update()
-        self.parent.update()
 
 class Export(QDialog):
     def __init__(self, parent=None):
@@ -600,7 +609,6 @@ class MainWindow(QMainWindow):
                     begin = self.begin
                     end = self.end
                 else:
-                    #print("swapping chimney points")
                     begin = self.end
                     end = self.begin
 
