@@ -564,7 +564,6 @@ class MainWindow(QMainWindow):
                     begin = self.begin
                     end = self.end
                 else:
-                    print("swapping chimney points")
                     begin = self.end
                     end = self.begin
 
