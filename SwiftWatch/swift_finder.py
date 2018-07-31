@@ -99,6 +99,7 @@ class State(Enum):
     DRAW_CHIMNEY = 2
     RUNNING = 3
     STOPPED = 4
+    VIDEO_ENDED = 5
 
 class Thread(QThread):
     changePixmap = pyqtSignal(QImage)
@@ -132,6 +133,8 @@ class Thread(QThread):
         self.swiftCounter.setMainROI(mainROI)
         self.swiftCounter.setChimneyPoints(chimneyPoints)
         self.swiftCounter.start()
+
+        self.mainWindow.state = State.VIDEO_ENDED
 
     def stop(self):
         if self.state == State.RUNNING:
@@ -203,6 +206,8 @@ class Settings(QMainWindow):
 
     def bckgrnd_sub_selection(self):
         sc.settings[sc.Settings.BACKGROUND_SUBTRACTOR] = self.bckgrnd_sub_combo.currentIndex()
+        if self.parent.trackerThread.state == State.RUNNING:
+            self.parent.trackerThread.swiftCounter.setBackgroundSubtractor()
 
     def erode_value_selection(self):
         sc.settings[sc.Settings.ERODE_ITERATIONS] = self.erode_value.value()
@@ -333,6 +338,10 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         loadUi("mainwindow.ui", self)
 
+        self.state = State.LOAD_VIDEO
+        self.trackerThread = Thread(self)
+        self.trackerThread.changePixmap.connect(self.set_image)
+
         self.changePixmap = pyqtSignal(QImage)
 
         self.about_dialog = About(self)
@@ -364,10 +373,6 @@ class MainWindow(QMainWindow):
 
         self.begin = QtCore.QPoint()
         self.end = QtCore.QPoint()
-
-        self.state = State.LOAD_VIDEO
-        self.trackerThread = Thread(self)
-        self.trackerThread.changePixmap.connect(self.set_image)
 
     @pyqtSlot()
     def load_clicked(self):
@@ -547,6 +552,13 @@ class MainWindow(QMainWindow):
                 br = QBrush(QColor(255, 255, 255, 1))
                 qp.setBrush(br)
                 qp.drawRect(self.rect())
+
+        elif self.state == State.VIDEO_ENDED:
+            self.display_text.setText("Video Finished")
+            br = QBrush(QColor(255, 255, 255, 1))
+            qp.setBrush(br)
+            qp.drawRect(self.rect())
+
 
     def mousePressEvent(self, event):
         self.end = event.pos()
