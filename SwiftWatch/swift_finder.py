@@ -227,11 +227,9 @@ class Settings(QMainWindow):
 
     def min_contour_area_selection(self):
         sc.settings[sc.Settings.MIN_CONTOUR_AREA] = self.min_contour_area.value()
-        print("Min contour area updated:", sc.settings[sc.Settings.MIN_CONTOUR_AREA])
 
     def max_contour_area_selection(self):
         sc.settings[sc.Settings.MAX_CONTOUR_AREA] = self.max_contour_area.value()
-        print("Max contour area updated:", sc.settings[sc.Settings.MAX_CONTOUR_AREA])
 
     def reset_defaults(self):
         self.tracker_combo.setCurrentIndex(defaultSettings[sc.Settings.TRACKER])
@@ -455,7 +453,6 @@ class MainWindow(QMainWindow):
 
     def restart_clicked(self):
         self.initUI(file_path)
-        print("Restart")
 
     def play_clicked(self):
         self.trackerThread.play()
@@ -506,7 +503,6 @@ class MainWindow(QMainWindow):
 
     def settings_clicked(self):
         try:
-            print("settings clicked")
             self.setting_dialog.setWindowTitle('Settings')
             self.setting_dialog.show()
         except:
