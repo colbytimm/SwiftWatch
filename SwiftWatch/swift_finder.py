@@ -180,7 +180,7 @@ class About(QMainWindow):
 class Settings(QMainWindow):
     def __init__(self, parent=None):
         super(Settings, self).__init__(parent, QtCore.Qt.WindowStaysOnTopHint)
-        loadUi("settings.ui", self).setFixedSize(350, 509)
+        loadUi("settings.ui", self).setFixedSize(350, 606)
         self.parent = parent
 
         self.tracker_combo.currentIndexChanged.connect(self.tracker_selection)
@@ -630,8 +630,6 @@ class MainWindow(QMainWindow):
     def toggle_zoom_main_ROI(self):
         self.trackerThread.toggleZoomMainROI()
 
-
-
 if __name__ == "__main__":
     global main_window
     app = QApplication(sys.argv)
@@ -640,7 +638,3 @@ if __name__ == "__main__":
     main_window.show()
 
     sys.exit(app.exec_())
-
-
-
-
