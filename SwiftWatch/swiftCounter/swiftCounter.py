@@ -124,7 +124,7 @@ class SwiftCounter:
 	def setBackgroundSubtractor(self):
 		bgSub = settings[Settings.BACKGROUND_SUBTRACTOR]
 		if bgSub == 0:
-			self.backgroundSubtractor = cv.createBackgroundSubtractorMOG()
+			self.backgroundSubtractor = cv.bgsegm.createBackgroundSubtractorMOG()
 		elif bgSub == 1:
 			self.backgroundSubtractor = cv.createBackgroundSubtractorMOG2()
 
