@@ -444,7 +444,6 @@ class MainWindow(QMainWindow):
 
     def restart_clicked(self):
         self.initUI(file_path)
-        print("Restart")
 
     def play_clicked(self):
         self.trackerThread.play()
@@ -495,7 +494,6 @@ class MainWindow(QMainWindow):
 
     def settings_clicked(self):
         try:
-            print("settings clicked")
             self.setting_dialog.setWindowTitle('Settings')
             self.setting_dialog.show()
         except:
@@ -602,7 +600,7 @@ class MainWindow(QMainWindow):
                     begin = self.begin
                     end = self.end
                 else:
-                    print("swapping chimney points")
+                    #print("swapping chimney points")
                     begin = self.end
                     end = self.begin
 
