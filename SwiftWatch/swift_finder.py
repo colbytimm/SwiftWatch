@@ -559,7 +559,6 @@ class MainWindow(QMainWindow):
             qp.setBrush(br)
             qp.drawRect(self.rect())
 
-
     def mousePressEvent(self, event):
         self.end = event.pos()
         self.begin = event.pos()
