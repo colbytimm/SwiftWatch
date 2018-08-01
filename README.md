@@ -1,8 +1,8 @@
 # SwiftWatch
 ## Automating the Collection of Bird Data from Video Footage
-Go check out the website: [SwiftWatch](https://swiftwatch.azurewebsites.net/).
+Go check out the website: [SwiftWatch](https://swiftwatch.azurewebsites.net/){:target="_blank"}.
 
-Read the report on this project: [Automating the Collection of Bird Data from Video Footage](https://swiftwatch.azurewebsites.net/documents/final_report.pdf).
+Read the report on this project: [Automating the Collection of Bird Data from Video Footage](https://swiftwatch.azurewebsites.net/documents/final_report.pdf){:target="_blank"}.
 ### Executive Summary
 
 The chimney swift is a bird that  is designated as a threatened species in Canada. These birds nest and roost in cave walls but now also use man-made chimneys for this purpose. Initially, the bird population grew with the expansion of urban settlements. Recently, however, the bird population has declined.
