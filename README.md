@@ -1,14 +1,17 @@
 # SwiftWatch
 ## Automating the Collection of Bird Data from Video Footage
-### Introduction
+### Executive Summary
 
-The chimney swift is a bird which has been designated as a threatened species in Canada. These birds naturally nest and roost on cave walls and in hollow trees, but following the emergence of the man-made chimney, they have taken on the behaviour of using open-ended chimneys for this purpose, hence their name. Initially, the chimney swift population increased along with urban settlements. More recently, the population has been in decline, leading to the decision to label the species as threatened.
+The chimney swift is a bird that  is designated as a threatened species in Canada. These birds nest and roost in cave walls but now also use man-made chimneys for this purpose. Initially, the bird population grew with the expansion of urban settlements. Recently, however, the bird population has declined.
 
-In order to track changes in the chimney swift population, cameras have been installed at one of their main nesting sites in Ontario. Swifts use two large chimneys in Sault Ste Marie, Ontario to nest and roost communally. Up to 2700 swifts have been observed using the chimneys during spring migration. Two high-definition cameras have been set up at each chimney to monitor the birds entering and exiting. One camera is placed inside the chimney and another monitors the chimney from the exterior. These cameras operate normally during the day and switch to infrared at night to capture the birds in low-light conditions. Cameras are operational from May 1 to August 31, which corresponds to the migration season. 
+To track the chimney swift population size, the Ontario government installed high-definition cameras to monitor two large communal chimneys in Sault Ste Marie, Ontario. The camera footage is manually examined to estimate the number of birds entering the chimneys.
 
-Until now, the video footage recorded by the cameras has been manually analyzed by people to count the number of swifts using the chimneys. Counting birds by hand can be daunting and tedious work, which is why this project has been proposed. The purpose of this project is to automate the counting of birds using a computer program which analyzes the video footage and counts the number of birds entering and exiting the chimney. More specifically, the program will identify the exact moment in time (hour:minute:second) when a swift enters or exits the chimney for any given day.
+Given that counting birds by hand is exhausting and tedious work, software automation would greatly reduce the time required to count the birds, thereby resulting in decreased cost and increased productivity. Furthermore, automation would remove the potential for a human counter to make errors. 
 
-Our team chose to work on this project because we were interested in learning about computer vision. We were also drawn to the fact that our project has real-world applicability because depending on the project’s outcome, deployment is a possibility. 
+Computer vision techniques implemented in Python and OpenCV were employed to detect and track moving swifts in recorded video footage. The future path of a swift is predicted based on the swift’s current and previous position. The predicted path is used to determine if the swift will enter the chimney.
 
-Currently, the potential user base are those involved with the nonprofit organization, Algoma SwiftWatch, who perform the task of manually counting swifts. If the project is a success, we hope that those involved with Algoma SwitchWatch will be able to use our program to largely decrease the amount of manual work involved in counting swifts, while at the same time gathering more data than was previously possible.
+![](https://github.com/colbytimm/SwiftWatch-Website/blob/master/images/run.gif)
 
+The bird tracking process starts with background subtraction. This technique produces an image which contains only moving objects in a frame. The objects contours within the resulting image are detected, and a tracker is applied to each new contour that does not already have a tracker. The swifts are continuously tracked until they enter the chimney. A performant bird counting application with a GUI is built using this bird tracking algorithm.
+
+The proposed algorithm was found to be successful in most cases, but struggles to provide accurate results under high-stress situations when there are many birds to track simultaneously with the birds overlapping in the video footage. 
