@@ -1,6 +1,7 @@
 # SwiftWatch
 ## Automating the Collection of Bird Data from Video Footage
 Go check out the website: [SwiftWatch](https://swiftwatch.azurewebsites.net/).
+
 Read the report on this project: [Automating the Collection of Bird Data from Video Footage](https://swiftwatch.azurewebsites.net/documents/final_report.pdf).
 ### Executive Summary
 
